@@ -1,9 +1,12 @@
 import express from "express";
 import authRoutes from "./routes/authRoutes";
+import connectDB from "./utils/db";
 
 const cors = require("cors");
 
 const app = express();
+
+connectDB();
 
 app.use(cors());
 
