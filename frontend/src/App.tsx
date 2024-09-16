@@ -5,22 +5,22 @@ import axios from 'axios';
 function App() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!email || !password) {
-      setError('Please enter both email and password.')
-      return
+      setError('Please enter both email and password.');
+      return;
     }
 
-    const credentials = { email, password }
+    const credentials = { email, password };
 
-    setEmail('')
-    setPassword('')
+    setEmail('');
+    setPassword('');
 
-    setError(null)
+    setError(null);
 
     try {
       const response = await axios.post(
