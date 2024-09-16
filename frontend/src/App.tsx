@@ -12,7 +12,7 @@ function App() {
 
     if (!email || !password) {
       setError('Please enter both email and password.')
-      return;
+      return
     }
 
     const credentials = { email, password }
