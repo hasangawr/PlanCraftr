@@ -1,36 +1,36 @@
-import { useState } from "react";
-import "./App.css";
-import axios from "axios";
+import { useState } from 'react';
+import './App.css';
+import axios from 'axios';
 
 function App() {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!email || !password) {
-      setError("Please enter both email and password.");
+      setError('Please enter both email and password.');
       return;
     }
 
     const credentials = { email, password };
 
-    setEmail("");
-    setPassword("");
+    setEmail('');
+    setPassword('');
 
     setError(null);
 
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API}/auth/login`,
-        credentials
+        credentials,
       );
 
-      console.log("login response: ", response);
+      console.log('login response: ', response);
     } catch (error) {
-      console.log("login failed: ", error);
+      console.log('login failed: ', error);
     }
   };
 
@@ -58,7 +58,7 @@ function App() {
                 required
               />
             </div>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
             <button type="submit">Login</button>
           </form>
         </div>
