@@ -41,8 +41,9 @@ function App() {
         <div className="login">
           <form onSubmit={handleSubmit}>
             <div>
-              <label>Email:</label>
+              <label htmlFor="email">Email:</label>
               <input
+                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -50,8 +51,9 @@ function App() {
               />
             </div>
             <div>
-              <label>Password:</label>
+              <label htmlFor="password">Password:</label>
               <input
+                id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
