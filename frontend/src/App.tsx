@@ -15,7 +15,7 @@ function App() {
       return;
     }
 
-    const credentials = { email, password };
+    const credentials = { email, password }
 
     setEmail('')
     setPassword('')
