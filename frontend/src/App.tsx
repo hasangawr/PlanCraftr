@@ -17,8 +17,8 @@ function App() {
 
     const credentials = { email, password };
 
-    setEmail('');
-    setPassword('');
+    setEmail('')
+    setPassword('')
 
     setError(null);
 
