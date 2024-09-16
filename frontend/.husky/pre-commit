@@ -1,2 +1,3 @@
+npm run prepare
 cd frontend
 npx lint-staged
