@@ -20,7 +20,7 @@ function App() {
     setEmail('')
     setPassword('')
 
-    setError(null);
+    setError(null)
 
     try {
       const response = await axios.post(
