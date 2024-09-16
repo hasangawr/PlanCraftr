@@ -30,7 +30,7 @@ function App() {
 
       console.log('login response: ', response);
     } catch (error) {
-      console.log('login failed!: ', error);
+      console.log('login failed: ', error);
     }
   };
 
