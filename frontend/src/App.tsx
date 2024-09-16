@@ -8,10 +8,10 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!email || !password) {
-      setError('Please enter both email and password.');
+      setError('Please enter both email and password.')
       return;
     }
 
@@ -30,7 +30,7 @@ function App() {
 
       console.log('login response: ', response);
     } catch (error) {
-      console.log('login failed: ', error);
+      console.log('login failed!: ', error);
     }
   };
 
