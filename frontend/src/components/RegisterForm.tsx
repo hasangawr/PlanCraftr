@@ -1,8 +1,16 @@
-import { useState } from 'react';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Link,
+  Paper,
+  TextField,
+  Typography,
+} from '@mui/material';
 import axios from 'axios';
-import { Box, Button, Link, Paper, TextField, Typography } from '@mui/material';
+import { useState } from 'react';
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   //const [error, setError] = useState<string | null>(null);
@@ -74,27 +82,35 @@ const LoginForm = () => {
         </Box>
         <Box sx={{ marginTop: '2rem' }}>
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-            Log in
+            Register
           </Typography>
           <Typography sx={{ color: '#6C737F' }}>
-            Don't have an account?{' '}
+            Already have an account?{' '}
             <Link
-              href="register"
+              href="/"
               sx={{ color: '#6366F1', cursor: 'pointer' }}
               underline="none"
             >
-              Register
+              Log in
             </Link>
           </Typography>
         </Box>
         <Box className="login-form" marginTop="2rem">
           <Box component="form" onSubmit={handleSubmit}>
             <TextField
+              id="name"
+              label="Name"
+              variant="outlined"
+              type="text"
+              fullWidth
+            />
+            <TextField
               id="email"
               label="Email"
               variant="outlined"
               type="email"
               fullWidth
+              sx={{ marginTop: '2rem' }}
             />
             <TextField
               id="password"
@@ -104,28 +120,28 @@ const LoginForm = () => {
               fullWidth
               sx={{ marginTop: '2rem' }}
             />
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Checkbox />
+              <Typography>
+                I have read the{' '}
+                <Link href="/terms" underline="none">
+                  Terms and Conditions
+                </Link>
+              </Typography>
+            </Box>
             <Button
               variant="contained"
               fullWidth
               sx={{ backgroundColor: '#6366F1', marginTop: '1.5rem' }}
-              aria-label="login"
-              type="submit"
+              aria-label="Register"
             >
-              Continue
+              Register
             </Button>
           </Box>
-          <Typography sx={{ marginTop: '1.75rem' }}>
-            <Link
-              style={{ color: '#6366F1', cursor: 'pointer' }}
-              underline="none"
-            >
-              Forgot password?
-            </Link>
-          </Typography>
         </Box>
       </Paper>
     </Box>
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
