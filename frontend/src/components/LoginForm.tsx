@@ -1,37 +1,40 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { Box, Button, Link, Paper, TextField, Typography } from '@mui/material';
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [emailError, setEmailError] = useState<boolean>(false);
   //const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!email || !password) {
-      //setError('Please enter both email and password.');
+    if (!email) {
+      setEmailError(true);
       return;
     }
 
-    const credentials = { email, password };
+    // const credentials = { email, password };
 
     setEmail('');
     setPassword('');
 
-    //setError(null);
+    //REMOVE
+    console.log(password);
 
-    try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API}/auth/login`,
-        credentials,
-      );
+    // //setError(null);
 
-      console.log('login response: ', response);
-    } catch (error) {
-      console.log('login failed: ', error);
-    }
+    // try {
+    //   const response = await axios.post(
+    //     `${import.meta.env.VITE_API}/auth/login`,
+    //     credentials,
+    //   );
+
+    //   console.log('login response: ', response);
+    // } catch (error) {
+    //   console.log('login failed: ', error);
+    // }
   };
 
   return (
@@ -88,13 +91,18 @@ const LoginForm = () => {
           </Typography>
         </Box>
         <Box className="login-form" marginTop="2rem">
-          <Box component="form" onSubmit={handleSubmit}>
+          <Box component="form" onSubmit={handleSubmit} noValidate>
             <TextField
               id="email"
               label="Email"
               variant="outlined"
               type="email"
               fullWidth
+              onChange={(e) => {
+                setEmail(e.target.value);
+              }}
+              error={emailError}
+              helperText={emailError ? 'Email is required' : ''}
             />
             <TextField
               id="password"
