@@ -5,13 +5,15 @@ const LoginForm = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [emailError, setEmailError] = useState<boolean>(false);
+  const [passwordError, setPasswordError] = useState<boolean>(false);
   //const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!email) {
-      setEmailError(true);
+    if (!email || !password) {
+      if (!email) setEmailError(true);
+      if (!password) setPasswordError(true);
       return;
     }
 
@@ -111,6 +113,11 @@ const LoginForm = () => {
               type="password"
               fullWidth
               sx={{ marginTop: '2rem' }}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+              error={passwordError}
+              helperText={passwordError ? 'Password is required' : ''}
             />
             <Button
               variant="contained"
