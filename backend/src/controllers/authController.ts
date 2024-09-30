@@ -7,7 +7,7 @@ export const register = async (req: Request, res: Response) => {
     const response = await registerUser(
       req.body.name,
       req.body.email,
-      req.body.password
+      req.body.password,
     );
 
     if (response) {
@@ -18,6 +18,7 @@ export const register = async (req: Request, res: Response) => {
         .status(409);
     }
   } catch (error) {
+    console.log("error: ", error);
     res.send("Registration failed. Try again").status(500);
   }
 };
@@ -38,6 +39,7 @@ export const authenticate = async (req: Request, res: Response) => {
       res.send("Invalid credentials").status(401);
     }
   } catch (error) {
+    console.log(error);
     res.send("Login failed. Try again").status(500);
   }
 };

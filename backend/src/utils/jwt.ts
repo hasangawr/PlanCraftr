@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-require("dotenv").config();
+import "dotenv/config";
 
 const secret = process.env.JWT_SECRET;
 
@@ -10,12 +10,13 @@ export const generateToken = (userId: string): string => {
 };
 
 export const validateToken = (
-  token: string
+  token: string,
 ): jwt.JwtPayload | string | null => {
   try {
     const decoded = jwt.verify(token, secret);
     return decoded;
   } catch (error) {
+    console.log("error: ", error);
     return null;
   }
 };

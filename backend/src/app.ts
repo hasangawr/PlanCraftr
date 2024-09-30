@@ -1,8 +1,7 @@
 import express from "express";
 import authRoutes from "./routes/authRoutes";
 import connectDB from "./utils/db";
-
-const cors = require("cors");
+import cors from "cors";
 
 const app = express();
 
