@@ -1,19 +1,19 @@
 import { useState } from 'react';
 import { Box, Button, Link, Paper, TextField, Typography } from '@mui/material';
+import { emailValidator, passwordValidator } from '../utils/validators';
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [emailError, setEmailError] = useState<boolean>(false);
-  const [passwordError, setPasswordError] = useState<boolean>(false);
-  //const [error, setError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<boolean | string>(false);
+  const [passwordError, setPasswordError] = useState<boolean | string>(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!email || !password) {
-      if (!email) setEmailError(true);
-      if (!password) setPasswordError(true);
+      if (!email) setEmailError('Email is required');
+      if (!password) setPasswordError('Password is required');
       return;
     }
 
@@ -101,10 +101,11 @@ const LoginForm = () => {
               type="email"
               fullWidth
               onChange={(e) => {
+                setEmailError(emailValidator(e.target.value));
                 setEmail(e.target.value);
               }}
-              error={emailError}
-              helperText={emailError ? 'Email is required' : ''}
+              error={emailError ? true : false}
+              helperText={emailError}
             />
             <TextField
               id="password"
@@ -114,10 +115,11 @@ const LoginForm = () => {
               fullWidth
               sx={{ marginTop: '2rem' }}
               onChange={(e) => {
+                setPasswordError(passwordValidator(e.target.value));
                 setPassword(e.target.value);
               }}
-              error={passwordError}
-              helperText={passwordError ? 'Password is required' : ''}
+              error={passwordError ? true : false}
+              helperText={passwordError}
             />
             <Button
               variant="contained"
@@ -133,6 +135,7 @@ const LoginForm = () => {
             <Link
               style={{ color: '#6366F1', cursor: 'pointer' }}
               underline="none"
+              href="forgot-password"
             >
               Forgot password?
             </Link>
