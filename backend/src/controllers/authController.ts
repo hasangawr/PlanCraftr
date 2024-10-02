@@ -40,7 +40,7 @@ export const authenticate = async (req: Request, res: Response) => {
     if (user) {
       const token = generateToken(user.id.toString());
       res.cookie("token", token, {
-        httpOnly: false,
+        httpOnly: process.env.NODE_ENV === "prod",
         secure: process.env.NODE_ENV === "prod",
         sameSite: "strict",
       });
