@@ -1,10 +1,11 @@
 import User from "../models/user";
 import argon2 from "argon2";
+import { validateToken } from "../utils/jwt";
 
 export const registerUser = async (
   name: string,
   email: string,
-  password: string
+  password: string,
 ) => {
   const user = await User.findOne({ email });
 
@@ -30,9 +31,14 @@ export const authenticateUser = async (email: string, password: string) => {
   if (user) {
     const passwordVerified = await argon2.verify(
       user.password as string,
-      password
+      password,
     );
     if (passwordVerified) return { id: user._id, name: user.name, email };
   }
   return null;
+};
+
+export const verifyUser = (token: string) => {
+  const user = validateToken(token);
+  return user;
 };
