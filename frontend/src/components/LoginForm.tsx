@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { Box, Button, Link, Paper, TextField, Typography } from '@mui/material';
 import { emailValidator, passwordValidator } from '../utils/validators';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [emailError, setEmailError] = useState<boolean | string>(false);
   const [passwordError, setPasswordError] = useState<boolean | string>(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -17,26 +21,23 @@ const LoginForm = () => {
       return;
     }
 
-    // const credentials = { email, password };
+    if (!emailError && !passwordError) {
+      try {
+        const response = await axios.post(
+          `${import.meta.env.VITE_API}/auth/login`,
+          { email, password },
+          { withCredentials: true },
+        );
 
-    setEmail('');
-    setPassword('');
+        console.log('login response: ', response);
 
-    //REMOVE
-    console.log(password);
-
-    // //setError(null);
-
-    // try {
-    //   const response = await axios.post(
-    //     `${import.meta.env.VITE_API}/auth/login`,
-    //     credentials,
-    //   );
-
-    //   console.log('login response: ', response);
-    // } catch (error) {
-    //   console.log('login failed: ', error);
-    // }
+        if (response.status === 200 && response.data.id) {
+          navigate('/dashboard');
+        }
+      } catch (error) {
+        console.log('login failed: ', error);
+      }
+    }
   };
 
   return (

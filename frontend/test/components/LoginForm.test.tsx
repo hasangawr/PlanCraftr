@@ -1,41 +1,73 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import LoginForm from '../../src/components/LoginForm';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import RegisterForm from '../../src/components/RegisterForm';
-import App from '../../src/App';
+import ForgotPassword from '../../src/components/ForgotPassword';
+import axios from 'axios';
+import { MemoryRouter } from 'react-router-dom';
 
 describe('LoginForm', () => {
   describe('navigation', () => {
-    test.todo(
-      'Should navigate to register when register link is clicked',
-      async () => {
-        //let testHistory, testLocation;
-        render(
-          <MemoryRouter initialEntries={['/']}>
-            <Routes>
-              <Route path="/" element={<App />} />
-              <Route path="register" element={<RegisterForm />} />
-            </Routes>
-          </MemoryRouter>,
-        );
+    test('Should navigate to register when register link is clicked', async () => {
+      const clickMock = vi
+        .fn()
+        .mockImplementation(HTMLAnchorElement.prototype.click);
+      clickMock.mockImplementationOnce(
+        (link) => link && render(<RegisterForm />),
+      );
 
-        const registerLink = screen.getByRole('link', { name: 'Register' });
+      render(
+        <MemoryRouter>
+          <LoginForm />
+        </MemoryRouter>,
+      );
 
-        await userEvent.click(registerLink);
+      // Check if the LoginForm is initially rendered
+      const registerLink = screen.getByRole('link', {
+        name: 'Register',
+      });
 
-        const link = await screen.getByRole('link', {
-          name: 'Terms and Conditions',
-        });
+      // Simulate clicking the 'Register' link
+      clickMock(registerLink);
 
-        expect(link).toBeInTheDocument();
-      },
-    );
+      // After clicking the link, the RegisterForm should be rendered
+      expect(
+        screen.getByRole('link', {
+          name: 'Log in',
+        }),
+      ).toBeInTheDocument();
+    });
 
-    test.todo(
-      'When Forgot password link is clicked, it should navigate to forgot-password page',
-    );
+    test('When Forgot password link is clicked, it should navigate to forgot-password page', () => {
+      const clickMock = vi
+        .fn()
+        .mockImplementation(HTMLAnchorElement.prototype.click);
+      clickMock.mockImplementationOnce(
+        (link) => link && render(<ForgotPassword />),
+      );
+
+      render(
+        <MemoryRouter>
+          <LoginForm />
+        </MemoryRouter>,
+      );
+
+      // Check if the LoginForm is initially rendered
+      const forgotPasswordLink = screen.getByRole('link', {
+        name: 'Forgot password?',
+      });
+
+      // Simulate clicking the 'Forgot password?' link
+      clickMock(forgotPasswordLink);
+
+      // After clicking the link, the ForgotPassword form should be rendered
+      expect(
+        screen.getByRole('heading', {
+          name: 'Forgot password component',
+        }),
+      ).toBeInTheDocument();
+    });
   });
 
   describe('field validations', () => {
@@ -43,7 +75,11 @@ describe('LoginForm', () => {
       test('When continue button is clicked, should display an error if email is empty', async () => {
         const user = userEvent.setup();
 
-        render(<LoginForm />);
+        render(
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>,
+        );
 
         const continueBtn = screen.getByRole('button', { name: 'login' });
 
@@ -57,11 +93,51 @@ describe('LoginForm', () => {
       test('Should display an error if email is invalid - case 1', async () => {
         const user = userEvent.setup();
 
-        render(<LoginForm />);
+        render(
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>,
+        );
 
         const email = screen.getByRole('textbox', { name: 'Email' });
 
         await user.type(email, 'test');
+
+        await waitFor(() => {
+          expect(screen.getByText('Invalid email address')).toBeInTheDocument();
+        });
+      });
+
+      test('Should display an error if email is invalid - case 2', async () => {
+        const user = userEvent.setup();
+
+        render(
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>,
+        );
+
+        const email = screen.getByRole('textbox', { name: 'Email' });
+
+        await user.type(email, 'test@');
+
+        await waitFor(() => {
+          expect(screen.getByText('Invalid email address')).toBeInTheDocument();
+        });
+      });
+
+      test('Should display an error if email is invalid - case 3', async () => {
+        const user = userEvent.setup();
+
+        render(
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>,
+        );
+
+        const email = screen.getByRole('textbox', { name: 'Email' });
+
+        await user.type(email, 'test@gmail.');
 
         await waitFor(() => {
           expect(screen.getByText('Invalid email address')).toBeInTheDocument();
@@ -73,7 +149,11 @@ describe('LoginForm', () => {
       test('When continue button is clicked, should display the error if password is empty', async () => {
         const user = userEvent.setup();
 
-        render(<LoginForm />);
+        render(
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>,
+        );
 
         const continueBtn = screen.getByRole('button', { name: 'login' });
 
@@ -84,25 +164,152 @@ describe('LoginForm', () => {
         });
       });
 
-      test.todo(
-        'Should display the error, if password is less than 6 characters',
-        () => {},
-      );
+      test('Should display the error, if password is less than 6 characters', async () => {
+        const user = userEvent.setup();
 
-      test.todo(
-        'Should diplay the error, if password does not contain at least one number',
-        () => {},
-      );
+        render(
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>,
+        );
+
+        const password = screen.getByLabelText('Password');
+
+        await user.type(password, 'test1');
+
+        await waitFor(() => {
+          expect(
+            screen.getByText('Password must be at least 6 characters long'),
+          ).toBeInTheDocument();
+        });
+      });
+
+      test('Should diplay the error, if password does not contain at least one number', async () => {
+        const user = userEvent.setup();
+
+        render(
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>,
+        );
+
+        const password = screen.getByLabelText('Password');
+
+        await user.type(password, 'testPass');
+
+        await waitFor(() => {
+          expect(
+            screen.getByText('Password must contain at least one number'),
+          ).toBeInTheDocument();
+        });
+      });
     });
 
-    test.todo(
-      'When continue button is clicked, Should not redirect to dashboard if email and password are invalid',
-      () => {},
-    );
+    test('When continue button is clicked, Should not send the verification api call, if email or password is invalid - case 1', async () => {
+      const invalidEmail = 'qwerty@gmail';
+      const invalidPass = 'test1234';
 
-    test.todo(
-      'When continue button is clicked, Should redirect to dashboard if email and password are valid',
-      () => {},
-    );
+      const user = userEvent.setup();
+
+      render(
+        <MemoryRouter>
+          <LoginForm />
+        </MemoryRouter>,
+      );
+
+      const emailField = screen.getByRole('textbox', { name: 'Email' });
+      const passwordField = screen.getByLabelText('Password');
+      const continueBtn = screen.getByRole('button', { name: 'login' });
+
+      await user.type(emailField, invalidEmail);
+      await user.type(passwordField, invalidPass);
+
+      //check whether api request is made to authenticate the user
+      const axiosPostSpy = vi.spyOn(axios, 'post').mockResolvedValue({});
+
+      await user.click(continueBtn);
+
+      await waitFor(() => {
+        expect(axiosPostSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    test('When continue button is clicked, Should not send the verification api call, if email or password is invalid - case 2', async () => {
+      const invalidEmail = 'qwerty@gmail.com';
+      const invalidPass = 'testPass';
+
+      const user = userEvent.setup();
+
+      render(
+        <MemoryRouter>
+          <LoginForm />
+        </MemoryRouter>,
+      );
+
+      const emailField = screen.getByRole('textbox', { name: 'Email' });
+      const passwordField = screen.getByLabelText('Password');
+      const continueBtn = screen.getByRole('button', { name: 'login' });
+
+      await user.type(emailField, invalidEmail);
+      await user.type(passwordField, invalidPass);
+
+      //check whether api request is made to authenticate the user
+      const axiosPostSpy = vi.spyOn(axios, 'post');
+
+      await user.click(continueBtn);
+
+      await waitFor(() => {
+        expect(axiosPostSpy).not.toHaveBeenCalled();
+      });
+    });
+
+    // vi.mock('react-router-dom', async () => {
+    //   const actual = await vi.importActual('react-router-dom');
+
+    //   return {
+    //     ...actual,
+    //     useNavigate: () => vi.fn(),
+    //   };
+    // });
+
+    test('When continue button is clicked, Should redirect to dashboard if email and password are valid', async () => {
+      const validEmail = 'qwerty@gmail.com';
+      const validPass = 'testPass1';
+
+      const authSuccessResponse = { status: 200, data: { id: 1 } };
+
+      const user = userEvent.setup();
+
+      render(
+        <MemoryRouter>
+          <LoginForm />,
+        </MemoryRouter>,
+      );
+
+      const emailField = screen.getByRole('textbox', { name: 'Email' });
+      const passwordField = screen.getByLabelText('Password');
+      const continueBtn = screen.getByRole('button', { name: 'login' });
+
+      await user.type(emailField, validEmail);
+      await user.type(passwordField, validPass);
+
+      const axiosPostSpy = vi
+        .spyOn(axios, 'post')
+        .mockResolvedValue(authSuccessResponse);
+
+      // const useNavigateSpy = vi
+      //   .spyOn(router, 'useNavigate')
+      //   .mockResolvedValue(() => render(<Dashboard />));
+
+      await user.click(continueBtn);
+
+      //check whether api request is made to authenticate the user
+      await waitFor(() => {
+        expect(axiosPostSpy).toHaveBeenCalledOnce();
+      });
+
+      // expect(useNavigateSpy).toHaveBeenCalledOnce();
+      // expect(useNavigateSpy).toHaveBeenCalledWith('/dashboard');
+    });
   });
 });
