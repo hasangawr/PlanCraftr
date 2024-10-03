@@ -1,8 +1,17 @@
 import { useState } from 'react';
-import { Box, Button, Link, Paper, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  Divider,
+  Link,
+  Paper,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { emailValidator, passwordValidator } from '../utils/validators';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import GoogleLoginButton from './GoogleLoginButton';
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>('');
@@ -132,6 +141,10 @@ const LoginForm = () => {
               Continue
             </Button>
           </Box>
+          <Divider>
+            <Typography>or</Typography>
+          </Divider>
+          <GoogleLoginButton />
           <Typography sx={{ marginTop: '1.75rem' }}>
             <Link
               style={{ color: '#6366F1', cursor: 'pointer' }}
