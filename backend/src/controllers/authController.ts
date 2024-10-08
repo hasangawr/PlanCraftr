@@ -33,15 +33,15 @@ export const register = async (req: Request, res: Response) => {
 export const authenticate = async (req: Request, res: Response) => {
   try {
     //REMOVE
-    console.log("Authentication request");
+    console.log("Authentication request - test debugger - new");
 
     const user = await authenticateUser(req.body.email, req.body.password);
 
     if (user) {
       const token = generateToken(user.id.toString());
       res.cookie("token", token, {
-        httpOnly: process.env.NODE_ENV === "prod",
-        secure: process.env.NODE_ENV === "prod",
+        httpOnly: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
       });
       res.json(user).status(200);
@@ -63,11 +63,22 @@ export const verify = async (req: Request, res: Response) => {
 
     console.log("token", token);
 
-    if (!token) {
+    if (!token && req.isUnauthenticated()) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const decoded = verifyUser(token);
-    res.status(200).json({ message: "Authenticated", user: decoded });
+    if (token) {
+      const decoded = verifyUser(token);
+      if (decoded) {
+        return res
+          .status(200)
+          .json({ message: "Authenticated", user: decoded });
+      } else {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+    }
+    if (req.isAuthenticated()) {
+      return res.status(200).json({ message: "Authenticated" });
+    }
   } catch (error) {
     console.log(error);
     return res.status(401).json({ message: "Unauthorized" });
