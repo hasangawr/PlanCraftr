@@ -4,6 +4,7 @@ const GoogleLoginButton = () => {
       window.location.href = `${import.meta.env.VITE_API}/auth/google`;
     } catch (error) {
       console.log(error);
+      console.error(error); // test git hooks
     }
   };
 
