@@ -1,6 +1,14 @@
 const GoogleLoginButton = () => {
+  const handleClick = async () => {
+    try {
+      window.location.href = `${import.meta.env.VITE_API}/auth/google`;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <button className="gsi-material-button">
+    <button className="gsi-material-button" onClick={handleClick}>
       <div className="gsi-material-button-state"></div>
       <div className="gsi-material-button-content-wrapper">
         <div className="gsi-material-button-icon">
