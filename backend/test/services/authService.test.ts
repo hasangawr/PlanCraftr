@@ -1,14 +1,14 @@
-import * as jwt from "../../src/utils/jwt";
-import { verifyUser } from "../../src/services/authService";
+import * as jwt from '../../src/utils/jwt';
+import { verifyUser } from '../../src/services/authService';
 
 afterEach(jest.clearAllMocks);
 
-describe("Auth Service", () => {
-  describe("Verify User", () => {
-    it("Should return null if the token is invalid", () => {
-      const invalidToken = "InvalidToken";
+describe('Auth Service', () => {
+  describe('Verify User', () => {
+    it('Should return null if the token is invalid', () => {
+      const invalidToken = 'InvalidToken';
 
-      const mock = jest.spyOn(jwt, "validateToken");
+      const mock = jest.spyOn(jwt, 'validateToken');
       mock.mockImplementation(() => {
         return null;
       });
@@ -18,11 +18,11 @@ describe("Auth Service", () => {
       expect(mock).toHaveBeenCalled();
       expect(user).toBe(null);
     });
-    it("Should return the decoded token if token is valid", () => {
-      const validToken = "validToken";
-      const decodedToken = "decodedToken";
+    it('Should return the decoded token if token is valid', () => {
+      const validToken = 'validToken';
+      const decodedToken = 'decodedToken';
 
-      const mock = jest.spyOn(jwt, "validateToken");
+      const mock = jest.spyOn(jwt, 'validateToken');
       mock.mockImplementation(() => {
         return decodedToken;
       });

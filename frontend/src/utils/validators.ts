@@ -8,8 +8,6 @@ export const passwordValidator = (password: string): string | boolean => {
   const minLength = 6;
   const hasNumber = /\d/.test(password);
 
-  console.log('test');
-
   if (password.length < minLength) {
     return `Password must be at least ${minLength} characters long`;
   }

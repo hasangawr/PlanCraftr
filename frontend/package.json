@@ -8,17 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare": "cd .. && husky frontend/.husky",
     "test": "vitest"
-  },
-  "lint-staged": {
-    "**/*.{js,ts,jsx,tsx}": [
-      "eslint --fix",
-      "prettier --write --ignore-unknown"
-    ],
-    "!**/*.{js,ts,jsx,tsx}": [
-      "prettier --write --ignore-unknown"
-    ]
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -45,9 +35,7 @@
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
-    "husky": "^9.1.6",
     "jsdom": "^25.0.0",
-    "lint-staged": "^15.2.10",
     "prettier": "3.3.3",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",

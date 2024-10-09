@@ -1,6 +1,6 @@
-import passport from "passport";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
-import User, { IUser } from "../models/user";
+import passport from 'passport';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import User, { IUser } from '../models/user';
 
 const passportConfig = (_passport: passport.PassportStatic) => {
   _passport.use(
@@ -8,7 +8,7 @@ const passportConfig = (_passport: passport.PassportStatic) => {
       {
         clientID: process.env.GOOGLE_CLIENT_ID as string,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-        callbackURL: "/auth/google/callback",
+        callbackURL: '/auth/google/callback',
       },
       async (accessToken, refreshToken, profile, done) => {
         const newUser = {

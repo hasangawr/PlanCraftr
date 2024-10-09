@@ -8,8 +8,6 @@ const connectDB = async () => {
 
     console.log('Successfully connected to the database!');
 
-    console.log('test git hooks');
-
     // const user = new User({
     //   name: "Bill",
     //   email: "bill@initech1.com",

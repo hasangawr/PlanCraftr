@@ -9,7 +9,7 @@
     "watch": "nodemon dist/index.js --watch",
     "test": "jest",
     "test:watch": "jest --watch",
-    "watch-compile-and-start": "tsc --watch && nodemon dist/index.js"
+    "watch-compile-and-start": "tsc --watch && nodemon dist/index.js --watch"
   },
   "keywords": [],
   "author": "",

@@ -1,12 +1,12 @@
-import jwt from "jsonwebtoken";
-import "dotenv/config";
+import jwt from 'jsonwebtoken';
+import 'dotenv/config';
 
 const secret = process.env.JWT_SECRET;
 
-if (!secret) throw new Error("JWT_SECRET is not defined");
+if (!secret) throw new Error('JWT_SECRET is not defined');
 
 export const generateToken = (userId: string): string => {
-  return jwt.sign({ id: userId }, secret, { expiresIn: "15m" });
+  return jwt.sign({ id: userId }, secret, { expiresIn: '15m' });
 };
 
 export const validateToken = (
@@ -16,7 +16,7 @@ export const validateToken = (
     const decoded = jwt.verify(token, secret);
     return decoded;
   } catch (error) {
-    console.log("error: ", error);
+    console.log('error: ', error);
     return null;
   }
 };

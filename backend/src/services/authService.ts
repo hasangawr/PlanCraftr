@@ -1,6 +1,6 @@
-import User from "../models/user";
-import argon2 from "argon2";
-import { validateToken } from "../utils/jwt";
+import User from '../models/user';
+import argon2 from 'argon2';
+import { validateToken } from '../utils/jwt';
 
 export const registerUser = async (
   name: string,

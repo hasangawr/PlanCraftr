@@ -1,0 +1,30 @@
+{
+  "name": "plancraftr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "backend/**/*.{js,ts}": [
+      "backend/node_modules/.bin/eslint --config backend/eslint.config.mjs --fix",
+      "backend/node_modules/.bin/prettier --write --ignore-unknown"
+    ],
+    "frontend/**/*.{js,ts,jsx,tsx}": [
+      "frontend/node_modules/.bin/eslint --config frontend/eslint.config.js --fix",
+      "frontend/node_modules/.bin/prettier --write --ignore-unknown"
+    ],
+    "!**/*.{js,ts,jsx,tsx}": [
+      "frontend/node_modules/.bin/prettier --write --ignore-unknown"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10"
+  }
+}
