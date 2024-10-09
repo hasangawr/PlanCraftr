@@ -9,6 +9,7 @@ export const passwordValidator = (password: string): string | boolean => {
   const hasNumber = /\d/.test(password);
 
   if (password.length < minLength) {
+    console.log('test git hooks'); //reomve
     return `Password must be at least ${minLength} characters long`;
   }
 
