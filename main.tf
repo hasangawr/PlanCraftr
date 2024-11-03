@@ -1,5 +1,4 @@
-resource "aws_ssm_parameter" "foo" {
-  name  = "foo"
-  type  = "String"
-  value = "barr"
+resource "aws_instance" "plancraftr_dev_server" {
+  ami           = "ami-047126e50991d067b"
+  instance_type = "t2.micro"
 }
