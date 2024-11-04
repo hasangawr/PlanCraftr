@@ -104,4 +104,4 @@ jobs:
 
       - name: ec2 ip
         if: steps.apply.outcome == 'success'
-        run: echo aws_instance.plancraftr_dev_server.public_ip
+        run: echo "ec2 instance public ip ${terraform output public_ip}"

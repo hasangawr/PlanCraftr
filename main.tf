@@ -6,3 +6,7 @@ resource "aws_instance" "plancraftr_dev_server" {
     Name = "plancraftr_dev_server"
   }
 }
+
+output "public_ip" {
+  value = aws_instance.plancraftr_dev_server.public_ip
+}
