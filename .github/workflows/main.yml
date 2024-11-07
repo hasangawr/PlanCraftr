@@ -122,7 +122,7 @@ jobs:
           ENV_VARIABLES: ${{ secrets.ENV }}
         run: |
           EC2_PUBLIC_IP=$(terraform output -raw staging_public_ip | cut -d ':' -f 1)
-          echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP"
+          echo "$EC2_PUBLIC_IP"
 
           # Add SSH key to the SSH agent
           mkdir ~/.ssh/
