@@ -1,12 +1,52 @@
-resource "aws_instance" "plancraftr_dev_server" {
+resource "aws_security_group" "staging_server_plancraftr_sg" {
+  name        = "staging_server_plancraftr_sg"
+  description = "Allow HTTP and HTTPS traffic from the internet"
+
+  ingress {
+    description = "Allow HTTP traffic"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow HTTPS traffic"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "Allow SSH access"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Or specify a narrower range for security
+  }
+
+  egress {
+    description = "Allow all outbound traffic"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_instance" "staging_server_plancraftr" {
   ami           = "ami-047126e50991d067b"
   instance_type = "t2.micro"
 
   tags = {
-    Name = "plancraftr_dev_server"
+    Name = "staging_server_plancraftr"
   }
+
+  key_name = "plancraftr-server-ssh-keypair"
+  vpc_security_group_ids = [aws_security_group.staging_server_plancraftr_sg.id]
 }
 
-output "public_ip" {
-  value = aws_instance.plancraftr_dev_server.public_ip
+output "staging_public_ip" {
+  value = aws_instance.staging_server_plancraftr.public_ip
 }
