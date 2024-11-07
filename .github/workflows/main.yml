@@ -117,10 +117,12 @@ jobs:
         id: configure_ec2
         if: steps.ec2_ip.outcome == 'success'
         env:
+          TF_LOG: ""
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ENV_VARIABLES: ${{ secrets.ENV }}
         run: |
           EC2_PUBLIC_IP=$(terraform output -raw staging_public_ip | cut -d ':' -f 1)
+          echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP"
 
           # Add SSH key to the SSH agent
           mkdir ~/.ssh/
