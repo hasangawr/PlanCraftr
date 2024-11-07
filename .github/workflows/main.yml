@@ -112,18 +112,15 @@ jobs:
         run: |
           echo "Raw Terraform output:"
           EC2_PUBLIC_IP=$(terraform output -raw staging_public_ip | tr -d '\n' | cut -d ':' -f 1 | awk -F 'staging_public_ip' '{print $2}')
-          echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP"
+          echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP" >> $GITHUB_ENV
 
       - name: Configure ec2 instance
         id: configure_ec2
-        if: steps.ec2_ip.outcome == 'success' && false
+        if: steps.ec2_ip.outcome == 'success'
         env:
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ENV_VARIABLES: ${{ secrets.ENV }}
         run: |
-          EC2_PUBLIC_IP=$(terraform output -raw staging_public_ip | cut -d ':' -f 1)
-          echo "$EC2_PUBLIC_IP"
-
           # Add SSH key to the SSH agent
           mkdir ~/.ssh/
           echo "${SSH_KEY}" > ec2_key.pem
