@@ -111,7 +111,7 @@ jobs:
           TF_LOG: ""
         run: |
           echo "Raw Terraform output:"
-          terraform output -raw staging_public_ip
+          terraform output -raw staging_public_ip | cut -d ':' -f 1
 
       - name: Configure ec2 instance
         id: configure_ec2
