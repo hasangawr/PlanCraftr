@@ -118,6 +118,7 @@ jobs:
         id: configure_ec2
         if: steps.ec2_ip.outcome == 'success'
         env:
+          EC2_PUBLIC_IP: ${{ env.EC2_PUBLIC_IP }}
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ENV_VARIABLES: ${{ secrets.ENV }}
         run: |
