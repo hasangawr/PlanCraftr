@@ -112,16 +112,16 @@ jobs:
         run: |
           EC2_PUBLIC_IP=$(terraform output -raw staging_public_ip | cut -d ':' -f 1)
           echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP"
-          echo "hello=$EC2_PUBLIC_IP=dbcdsbckdsb"
 
       - name: Configure ec2 instance
         id: configure_ec2
-        if: steps.ec2_ip.outcome == 'success' && false
+        if: steps.ec2_ip.outcome == 'success'
         env:
-          EC2_PUBLIC_IP: ${{ env.EC2_PUBLIC_IP }}
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ENV_VARIABLES: ${{ secrets.ENV }}
         run: |
+          EC2_PUBLIC_IP=$(terraform output -raw staging_public_ip | cut -d ':' -f 1)
+
           # Add SSH key to the SSH agent
           echo "${SSH_KEY}" > ec2_key.pem
           chmod 600 ec2_key.pem
