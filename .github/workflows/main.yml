@@ -107,6 +107,8 @@ jobs:
       - name: Get ec2 public ip
         id: ec2_ip
         if: steps.apply.outcome == 'success'
+        env:
+          TF_LOG: ""
         run: |
           echo "Raw Terraform output:"
           terraform output -raw staging_public_ip
