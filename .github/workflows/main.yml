@@ -104,8 +104,61 @@ jobs:
         if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
 
-      - name: Configure
+      - name: Get ec2 public ip
+        id: ec2_ip
         if: steps.apply.outcome == 'success'
         run: |
-          EC2_PUBLIC_IP = terraform output staging_public_ip
-          echo "ec2 instance public ip ${EC2_PUBLIC_IP}"
+          echo "EC2_PUBLIC_IP=$(terraform output -raw staging_public_ip)" >> $GITHUB_ENV
+
+      - name: Configure ec2 instance
+        id: configure_ec2
+        if: steps.ec2_ip.outcome == 'success'
+        env:
+          EC2_PUBLIC_IP: ${{ env.EC2_PUBLIC_IP }}
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ENV_VARIABLES: ${{ secrets.ENV }}
+        run: |
+          # Add SSH key to the SSH agent
+          echo "${SSH_KEY}" > ec2_key.pem
+          chmod 600 ec2_key.pem
+          ssh-keyscan -H $EC2_PUBLIC_IP >> ~/.ssh/known_hosts
+
+          ssh -i ec2_key.pem ubuntu@$EC2_PUBLIC_IP << 'EOF'
+            # Update & Upgrade
+            sudo apt update -y && sudo apt upgrade -y
+
+            # Install Node.js
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+
+            # Install pm2
+            sudo npm install pm2 -g
+
+            # Clone the repository
+            mkdir -p ~/app && cd ~/app
+            git clone https://github.com/hasangawr/PlanCraftr.git .
+            cd backend
+
+            # Set up environment and install dependencies
+            echo "$ENV_VARIABLES" > .env
+            npm install
+            npm run build
+
+            # Start the app using pm2
+            pm2 start "npm run start"
+
+            # Install Caddy for reverse proxy
+            sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
+            curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+            curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+            sudo apt update
+            sudo apt install -y caddy
+
+            # Configure Caddy reverse proxy
+            echo "api.plancraftr.com {
+              reverse_proxy localhost:3000
+            }" | sudo tee Caddyfile
+
+            # Start Caddy
+            sudo systemctl restart caddy
+          EOF
