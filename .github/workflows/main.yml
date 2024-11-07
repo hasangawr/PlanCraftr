@@ -1,9 +1,11 @@
-name: "Terraform action"
+name: "Staging env provision & configure"
 on:
   push:
     branches:
       - dev
   pull_request:
+    branches:
+      - dev
 permissions:
   id-token: write # This is required for aws oidc connection
   contents: read # This is required for actions/checkout
@@ -12,7 +14,7 @@ env:
   TF_LOG: INFO
   AWS_REGION: ${{ secrets.AWS_REGION }}
 jobs:
-  deploy:
+  provision_and_configure:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -102,6 +104,8 @@ jobs:
         if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
 
-      - name: ec2 ip
+      - name: Configure
         if: steps.apply.outcome == 'success'
-        run: echo "ec2 instance public ip ${terraform output public_ip}"
+        run: |
+          EC2_PUBLIC_IP = terraform output staging_public_ip
+          echo "ec2 instance public ip ${EC2_PUBLIC_IP}"
