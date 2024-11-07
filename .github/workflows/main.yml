@@ -108,8 +108,8 @@ jobs:
         id: ec2_ip
         if: steps.apply.outcome == 'success'
         run: |
-          EC2_PUBLIC_IP=$(terraform output -raw staging_public_ip | cut -d ':' -f 1)
-          echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP"
+          export EC2_PUBLIC_IP=$(terraform output -raw staging_public_ip | cut -d ':' -f 1)
+          echo "hello=$EC2_PUBLIC_IP"
 
       - name: Configure ec2 instance
         id: configure_ec2
