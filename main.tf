@@ -48,13 +48,13 @@ resource "aws_instance" "staging_server_plancraftr" {
 }
 
 # Fetch the Hosted Zone
-data "aws_route53_zone" "plancraftr_zone" {
-  name = "plancraftr.com"
-}
+# data "aws_route53_zone" "plancraftr_zone" {
+#   name = "plancraftr.com"
+# }
 
 # Route 53 Record pointing to EC2 instance
 resource "aws_route53_record" "staging_api_plancraftr" {
-  zone_id = data.aws_route53_zone.plancraftr_zone.id
+  zone_id = "Z097947118UN4SFV6P8TX"
   name    = "staging.api.plancraftr.com"
   type    = "A"
   ttl     = 300
