@@ -47,6 +47,20 @@ resource "aws_instance" "staging_server_plancraftr" {
   vpc_security_group_ids = [aws_security_group.staging_server_plancraftr_sg.id]
 }
 
+# Fetch the Hosted Zone
+# data "aws_route53_zone" "plancraftr_zone" {
+#   name = "plancraftr.com"
+# }
+
+# Route 53 Record pointing to EC2 instance
+resource "aws_route53_record" "staging_api_plancraftr" {
+  zone_id = "Z097947118UN4SFV6P8TX"
+  name    = "staging.api.plancraftr.com"
+  type    = "A"
+  ttl     = 300
+  records = [aws_instance.staging_server_plancraftr.public_ip]
+}
+
 output "staging_public_ip" {
   value = aws_instance.staging_server_plancraftr.public_ip
 }
