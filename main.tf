@@ -53,7 +53,7 @@ data "aws_route53_zone" "plancraftr_zone" {
 }
 
 # Route 53 Record pointing to EC2 instance
-resource "aws_route53_record" "staging.api.plancraftr.com" {
+resource "aws_route53_record" "staging_api_plancraftr" {
   zone_id = data.aws_route53_zone.plancraftr_zone.id
   name    = "staging.api.plancraftr.com"
   type    = "A"
