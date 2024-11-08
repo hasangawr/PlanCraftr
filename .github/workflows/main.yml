@@ -122,6 +122,8 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ENV_VARIABLES: ${{ secrets.ENV }}
         run: |
+          echo "$ENV_VARIABLES"
+
           # Add SSH key to the SSH agent
           mkdir ~/.ssh/
           echo "${SSH_KEY}" > ec2_key.pem
