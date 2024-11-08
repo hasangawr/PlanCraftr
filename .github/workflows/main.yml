@@ -160,7 +160,7 @@ jobs:
             sudo apt install -y caddy
 
             # Configure Caddy reverse proxy
-            echo "api.plancraftr.com {
+            echo "staging.api.plancraftr.com {
               reverse_proxy localhost:3000
             }" | sudo tee Caddyfile
 
