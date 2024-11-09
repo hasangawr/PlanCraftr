@@ -122,8 +122,6 @@ jobs:
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ENV_VARIABLES: ${{ secrets.ENV }}
         run: |
-          echo "$ENV_VARIABLES"
-
           # Add SSH key to the SSH agent
           mkdir ~/.ssh/
           echo "${SSH_KEY}" > ec2_key.pem
@@ -147,6 +145,7 @@ jobs:
             cd backend
 
             # Set up environment and install dependencies
+            echo "env_vars:$ENV_VARIABLES"
             echo "$ENV_VARIABLES" > .env
             npm install
             npm run build
