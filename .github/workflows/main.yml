@@ -156,6 +156,10 @@ jobs:
             # Start the app using pm2
             pm2 start "npm run start"
 
+            # Configure pm2 to be persistent
+            sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u ubuntu --hp /home/ubuntu
+            pm2 save
+
             # Install Caddy for reverse proxy
             sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
             curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
@@ -163,11 +167,16 @@ jobs:
             sudo apt update
             sudo apt install -y caddy
 
+            # Change default Caddyfile permission
+            sudo chmod 666 /etc/caddy/Caddyfile
+
             # Configure Caddy reverse proxy
             echo "staging.api.plancraftr.com {
               reverse_proxy localhost:3000
-            }" | sudo tee Caddyfile
+            }" | sudo tee /etc/caddy/Caddyfile
 
             # Start Caddy
+            sudo systemctl enable caddy
+            sudo systemctl start caddy
             sudo systemctl restart caddy
           EOF
