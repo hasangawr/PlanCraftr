@@ -128,6 +128,10 @@ jobs:
           chmod 600 ec2_key.pem
           ssh-keyscan -H $EC2_PUBLIC_IP > ~/.ssh/known_hosts
 
+          # create and copy .env file to remote ec2 instance
+          echo "$ENV_VARIABLES" > .env
+          scp -i ec2_key.pem .env ubuntu@$EC2_PUBLIC_IP:~/
+
           ssh -i ec2_key.pem ubuntu@$EC2_PUBLIC_IP << 'EOF'
             # Update & Upgrade
             sudo apt update -y && sudo apt upgrade -y
@@ -145,8 +149,7 @@ jobs:
             cd backend
 
             # Set up environment and install dependencies
-            echo "env_vars:$ENV_VARIABLES"
-            echo "$ENV_VARIABLES" > .env
+            mv ~/.env ~/app/backend/
             npm install
             npm run build
 
