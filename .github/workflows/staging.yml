@@ -193,8 +193,12 @@ jobs:
       - name: Git checkout
         uses: actions/checkout@v3
 
-      - name: Wait for 5 minutes
-        run: sleep 300
+      - name: Define sleep time in minutes
+        id: define_sleep
+        run: echo "sleep_minutes=$(( ${{ vars.DESTROY_AWS_STAGING_ENV_RESOURCES_AFTER_SECONDS }} / 60 ))" >> $GITHUB_ENV
+
+      - name: Wait for ${{ env.sleep_minutes }} minutes
+        run: sleep ${{ vars.DESTROY_AWS_STAGING_ENV_RESOURCES_AFTER_SECONDS }}
 
       - name: Configure AWS credentials from AWS account
         uses: aws-actions/configure-aws-credentials@v1
