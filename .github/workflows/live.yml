@@ -1,11 +1,11 @@
-name: "Staging env provision & configure"
+name: "Live env provision & configure"
 on:
   push:
     branches:
-      - dev
+      - main
   pull_request:
     branches:
-      - dev
+      - main
 permissions:
   id-token: write # This is required for aws oidc connection
   contents: read # This is required for actions/checkout
@@ -19,7 +19,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./infrastructure/terraform/staging/
+        working-directory: ./infrastructure/terraform/live/
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
@@ -44,7 +44,7 @@ jobs:
       - name: Terraform Init
         id: init
         env:
-          AWS_BUCKET_NAME: ${{ secrets.AWS_TF_STATE_S3_BUCKET_NAME }}
+          AWS_BUCKET_NAME: ${{ secrets.AWS_LIVE_TF_STATE_S3_BUCKET_NAME }}
           AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_TF_STATE_S3_BUCKET_KEY_NAME }}
         run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
 
@@ -101,7 +101,7 @@ jobs:
 
       - name: Terraform Apply
         id: apply
-        if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
 
       - name: Get ec2 public ip
@@ -111,7 +111,7 @@ jobs:
           TF_LOG: ""
         run: |
           echo "Raw Terraform output:"
-          EC2_PUBLIC_IP=$(terraform output -raw staging_public_ip | tr -d '\n' | cut -d ':' -f 1 | awk -F 'staging_public_ip' '{print $2}')
+          EC2_PUBLIC_IP=$(terraform output -raw live_public_ip | tr -d '\n' | cut -d ':' -f 1 | awk -F 'live_public_ip' '{print $2}')
           echo "EC2_PUBLIC_IP=$EC2_PUBLIC_IP" >> $GITHUB_ENV
 
       - name: Configure ec2 instance
@@ -120,7 +120,7 @@ jobs:
         env:
           EC2_PUBLIC_IP: ${{ env.EC2_PUBLIC_IP }}
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ENV_VARIABLES: ${{ secrets.STAGING_ENV }}
+          ENV_VARIABLES: ${{ secrets.LIVE_ENV }}
         run: |
           # Add SSH key to the SSH agent
           mkdir ~/.ssh/
@@ -171,7 +171,7 @@ jobs:
             sudo chmod 666 /etc/caddy/Caddyfile
 
             # Configure Caddy reverse proxy
-            echo "staging.api.plancraftr.com {
+            echo "live.api.plancraftr.com {
               reverse_proxy localhost:3000
             }" | sudo tee /etc/caddy/Caddyfile
 
@@ -180,44 +180,3 @@ jobs:
             sudo systemctl start caddy
             sudo systemctl restart caddy
           EOF
-
-  destroy_after_delay:
-    runs-on: ubuntu-latest
-    needs: provision_and_configure
-    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
-    defaults:
-      run:
-        shell: bash
-        working-directory: ./infrastructure/terraform/staging/
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v3
-
-      - name: Define sleep time in minutes
-        id: define_sleep
-        run: echo "sleep_minutes=$(( ${{ vars.DESTROY_AWS_STAGING_ENV_RESOURCES_AFTER_SECONDS }} / 60 ))" >> $GITHUB_ENV
-
-      - name: Wait for ${{ env.sleep_minutes }} minutes
-        run: sleep ${{ vars.DESTROY_AWS_STAGING_ENV_RESOURCES_AFTER_SECONDS }}
-
-      - name: Configure AWS credentials from AWS account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-session-name: GitHub-OIDC-TERRAFORM
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.2.5
-
-      - name: Terraform Init
-        id: init
-        env:
-          AWS_BUCKET_NAME: ${{ secrets.AWS_TF_STATE_S3_BUCKET_NAME }}
-          AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_TF_STATE_S3_BUCKET_KEY_NAME }}
-        run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
-
-      - name: Terraform Destroy
-        run: terraform destroy -auto-approve -input=false
