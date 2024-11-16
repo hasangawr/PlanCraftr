@@ -120,7 +120,7 @@ jobs:
         env:
           EC2_PUBLIC_IP: ${{ env.EC2_PUBLIC_IP }}
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          ENV_VARIABLES: ${{ secrets.ENV }}
+          ENV_VARIABLES: ${{ secrets.STAGING_ENV }}
         run: |
           # Add SSH key to the SSH agent
           mkdir ~/.ssh/
