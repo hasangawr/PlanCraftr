@@ -1,51 +1,44 @@
-import { useState } from 'react';
 import {
   Box,
   Button,
-  Divider,
+  Checkbox,
   Link,
   Paper,
   TextField,
   Typography,
 } from '@mui/material';
-import { emailValidator, passwordValidator } from '../utils/validators';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import GoogleLoginButton from './GoogleLoginButton';
+import { useState } from 'react';
 
-const LoginForm = () => {
+const RegisterForm = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [emailError, setEmailError] = useState<boolean | string>(false);
-  const [passwordError, setPasswordError] = useState<boolean | string>(false);
-
-  const navigate = useNavigate();
+  //const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!email || !password) {
-      if (!email) setEmailError('Email is required');
-      if (!password) setPasswordError('Password is required');
+      //setError('Please enter both email and password.');
       return;
     }
 
-    if (!emailError && !passwordError) {
-      try {
-        const response = await axios.post(
-          `${import.meta.env.VITE_API}/auth/login`,
-          { email, password },
-          { withCredentials: true },
-        );
+    const credentials = { email, password };
 
-        console.log('login response: ', response);
+    setEmail('');
+    setPassword('');
 
-        if (response.status === 200 && response.data.id) {
-          navigate('/dashboard');
-        }
-      } catch (error) {
-        console.log('login failed: ', error);
-      }
+    //setError(null);
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API}/auth/login`,
+        credentials,
+      );
+
+      console.log('login response: ', response);
+    } catch (error) {
+      console.log('login failed: ', error);
     }
   };
 
@@ -89,33 +82,35 @@ const LoginForm = () => {
         </Box>
         <Box sx={{ marginTop: '2rem' }}>
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-            Log in
+            Register
           </Typography>
           <Typography sx={{ color: '#6C737F' }}>
-            Don't have an account?{' '}
+            Already have an account?{' '}
             <Link
-              href="register"
+              href="/"
               sx={{ color: '#6366F1', cursor: 'pointer' }}
               underline="none"
             >
-              Register
+              Log in
             </Link>
           </Typography>
         </Box>
         <Box className="login-form" marginTop="2rem">
-          <Box component="form" onSubmit={handleSubmit} noValidate>
+          <Box component="form" onSubmit={handleSubmit}>
+            <TextField
+              id="name"
+              label="Name"
+              variant="outlined"
+              type="text"
+              fullWidth
+            />
             <TextField
               id="email"
               label="Email"
               variant="outlined"
               type="email"
               fullWidth
-              onChange={(e) => {
-                setEmailError(emailValidator(e.target.value));
-                setEmail(e.target.value);
-              }}
-              error={emailError ? true : false}
-              helperText={emailError}
+              sx={{ marginTop: '2rem' }}
             />
             <TextField
               id="password"
@@ -124,40 +119,29 @@ const LoginForm = () => {
               type="password"
               fullWidth
               sx={{ marginTop: '2rem' }}
-              onChange={(e) => {
-                setPasswordError(passwordValidator(e.target.value));
-                setPassword(e.target.value);
-              }}
-              error={passwordError ? true : false}
-              helperText={passwordError}
             />
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Checkbox />
+              <Typography>
+                I have read the{' '}
+                <Link href="/terms" underline="none">
+                  Terms and Conditions
+                </Link>
+              </Typography>
+            </Box>
             <Button
               variant="contained"
               fullWidth
               sx={{ backgroundColor: '#6366F1', marginTop: '1.5rem' }}
-              aria-label="login"
-              type="submit"
+              aria-label="Register"
             >
-              Continue
+              Register
             </Button>
           </Box>
-          <Divider>
-            <Typography>or</Typography>
-          </Divider>
-          <GoogleLoginButton />
-          <Typography sx={{ marginTop: '1.75rem' }}>
-            <Link
-              style={{ color: '#6366F1', cursor: 'pointer' }}
-              underline="none"
-              href="forgot-password"
-            >
-              Forgot password?
-            </Link>
-          </Typography>
         </Box>
       </Paper>
     </Box>
   );
 };
 
-export default LoginForm;
+export default RegisterForm;

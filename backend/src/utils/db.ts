@@ -1,12 +1,12 @@
-import { connect } from "mongoose";
-require("dotenv").config();
+import { connect } from 'mongoose';
+import 'dotenv/config';
 
 const connectDB = async () => {
   try {
     // 4. Connect to MongoDB
     await connect(process.env.MONGODB_URI as string);
 
-    console.log("Successfully connected to the database!");
+    console.log('Successfully connected to the database!');
 
     // const user = new User({
     //   name: "Bill",

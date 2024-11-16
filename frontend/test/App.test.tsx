@@ -6,9 +6,9 @@ describe('App', () => {
   test('Should render email, password and Login button', () => {
     render(<App />);
 
-    const email = screen.getByRole('textbox', { name: 'Email:' });
-    const password = screen.getByLabelText('Password:');
-    const button = screen.getByRole('button', { name: 'Login' });
+    const email = screen.getByRole('textbox', { name: 'Email' });
+    const password = screen.getByLabelText('Password');
+    const button = screen.getByRole('button', { name: 'login' });
 
     expect(email).toBeInTheDocument();
     expect(password).toBeInTheDocument();

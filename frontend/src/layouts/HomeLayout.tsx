@@ -4,7 +4,7 @@ import Hero from '../components/Hero';
 
 const HomeLayout = () => {
   return (
-    <Box display={'flex'}>
+    <Box sx={{ height: '100vh', display: 'flex' }}>
       <Hero />
       <Outlet />
     </Box>
