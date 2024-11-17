@@ -50,7 +50,7 @@ resource "aws_s3_bucket_website_configuration" "static_website_config_s3_staging
 
   redirect_all_requests_to {
     host_name = "www.staging.plancraftr.com"
-    protocol = "http" #change to https
+    protocol = "https" #change to https
   }
 }
 
