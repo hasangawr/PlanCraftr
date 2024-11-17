@@ -62,7 +62,7 @@ resource "aws_route53_record" "www_staging_plancraftr" {
   type    = "A"
 
   alias {
-    name = aws_s3_bucket.www_staging_plancraftr_com.website_domain
+    name = aws_s3_bucket.www_staging_plancraftr_com.website_endpoint
     zone_id = aws_s3_bucket.www_staging_plancraftr_com.hosted_zone_id
     evaluate_target_health = false
   }
@@ -74,7 +74,7 @@ resource "aws_route53_record" "staging_plancraftr" {
   type    = "A"
 
   alias {
-    name = aws_s3_bucket.staging_plancraftr_com.website_domain
+    name = aws_s3_bucket.staging_plancraftr_com.website_endpoint
     zone_id = aws_s3_bucket.staging_plancraftr_com.hosted_zone_id
     evaluate_target_health = false
   }
