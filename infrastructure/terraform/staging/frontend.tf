@@ -2,17 +2,17 @@
   
 # }
 
-resource "aws_s3_bucket" "www.staging.plancraftr.com" {
+resource "aws_s3_bucket" "www_staging_plancraftr_com" {
     bucket = "www.staging.plancraftr.com"
 
 }
 
-resource "aws_s3_bucket" "staging.plancraftr.com" {
+resource "aws_s3_bucket" "staging_plancraftr_com" {
     bucket = "staging.plancraftr.com"
 }
 
 resource "aws_s3_bucket_public_access_block" "allow_public_access_s3_www_staging" {
-  bucket = aws_s3_bucket.www.staging.plancraftr.com.id
+  bucket = aws_s3_bucket.www_staging_plancraftr_com.id
 
   block_public_acls = false
   block_public_policy = false
@@ -21,7 +21,7 @@ resource "aws_s3_bucket_public_access_block" "allow_public_access_s3_www_staging
 }
 
 resource "aws_s3_bucket_policy" "allow_anyone_get_objects_s3_www_staging" {
-  bucket = aws_s3_bucket.www.staging.plancraftr.com.id
+  bucket = aws_s3_bucket.www_staging_plancraftr_com.id
 
   policy = jsonencode({
     "Version": "2012-10-17",
@@ -38,7 +38,7 @@ resource "aws_s3_bucket_policy" "allow_anyone_get_objects_s3_www_staging" {
 }
 
 resource "aws_s3_bucket_website_configuration" "static_website_config_s3_www_staging" {
-  bucket = aws_s3_bucket.www.staging.plancraftr.com.id
+  bucket = aws_s3_bucket.www_staging_plancraftr_com.id
 
   index_document {
     suffix = "index.html"
@@ -46,7 +46,7 @@ resource "aws_s3_bucket_website_configuration" "static_website_config_s3_www_sta
 }
 
 resource "aws_s3_bucket_website_configuration" "static_website_config_s3_staging" {
-  bucket = aws_s3_bucket.staging.plancraftr.com.id
+  bucket = aws_s3_bucket.staging_plancraftr_com.id
 
   redirect_all_requests_to {
     host_name = "www.staging.plancraftr.com"
