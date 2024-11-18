@@ -1,6 +1,3 @@
-# resource "aws_cloudfront_distribution" "name" {
-  
-# }
 
 resource "aws_s3_bucket" "www_staging_plancraftr_com" {
     bucket = "www.staging.plancraftr.com"
@@ -52,6 +49,35 @@ resource "aws_s3_bucket_website_configuration" "static_website_config_s3_staging
     host_name = "www.staging.plancraftr.com"
     protocol = "http" #change to https
   }
+}
+
+## Cloudfront config
+resource "aws_cloudfront_distribution" "www_staging_distribution" {
+    origin {
+      domain_name = aws_s3_bucket.www_staging_plancraftr_com.website_endpoint
+      origin_id = "www_staging_s3_origin"
+    }
+
+    default_cache_behavior {
+      viewer_protocol_policy = "redirect-to-https"
+      allowed_methods = [ "GET", "HEAD" ]
+      target_origin_id = "www_staging_s3_origin"
+      cached_methods = [ "GET", "HEAD" ]
+    }
+
+    viewer_certificate {
+      acm_certificate_arn = "arn:aws:acm:us-east-1:084828604403:certificate/5628d5cf-28ff-4a6b-9d1d-832edaa1b6bc"
+    }
+
+    restrictions {
+      geo_restriction {
+        restriction_type = "none"
+      }
+    }
+
+    aliases = ["www.staging.plancraftr.com"]
+    enabled = true
+    retain_on_delete = true
 }
 
 
