@@ -75,6 +75,7 @@ resource "aws_cloudfront_distribution" "www_staging_distribution" {
 
     viewer_certificate {
       acm_certificate_arn = "arn:aws:acm:us-east-1:084828604403:certificate/5628d5cf-28ff-4a6b-9d1d-832edaa1b6bc"
+      ssl_support_method = "sni-only"
     }
 
     restrictions {
