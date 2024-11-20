@@ -134,7 +134,7 @@ resource "aws_route53_record" "www_staging_plancraftr" {
   type    = "A"
 
   alias {
-    name = aws_s3_bucket_website_configuration.static_website_config_s3_www_staging.website_endpoint
+    name = aws_s3_bucket_website_configuration.static_website_config_s3_www_staging.website_domain
     zone_id = aws_s3_bucket.www_staging_plancraftr_com.hosted_zone_id
     evaluate_target_health = false
   }
@@ -146,7 +146,7 @@ resource "aws_route53_record" "staging_plancraftr" {
   type    = "A"
 
   alias {
-    name = aws_s3_bucket_website_configuration.static_website_config_s3_staging.website_endpoint
+    name = aws_s3_bucket_website_configuration.static_website_config_s3_staging.website_domain
     zone_id = aws_s3_bucket.staging_plancraftr_com.hosted_zone_id
     evaluate_target_health = false
   }
