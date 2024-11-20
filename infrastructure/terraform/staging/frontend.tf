@@ -54,7 +54,7 @@ resource "aws_s3_bucket_website_configuration" "static_website_config_s3_staging
 ## Cloudfront config
 resource "aws_cloudfront_distribution" "www_staging_distribution" {
     origin {
-      domain_name = aws_s3_bucket.www_staging_plancraftr_com.website_domain
+      domain_name = aws_s3_bucket.www_staging_plancraftr_com.bucket_regional_domain_name
       origin_id = "www_staging_s3_origin"
     }
 
