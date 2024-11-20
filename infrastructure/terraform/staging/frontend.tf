@@ -52,79 +52,79 @@ resource "aws_s3_bucket_website_configuration" "static_website_config_s3_staging
 }
 
 ## Cloudfront config
-# resource "aws_cloudfront_distribution" "www_staging_distribution" {
-#     origin {
-#       domain_name = aws_s3_bucket.www_staging_plancraftr_com.bucket_regional_domain_name
-#       origin_id = "www_staging_s3_origin"
-#     }
+resource "aws_cloudfront_distribution" "www_staging_distribution" {
+    origin {
+      domain_name = aws_s3_bucket.www_staging_plancraftr_com.bucket_regional_domain_name
+      origin_id = "www_staging_s3_origin"
+    }
 
-#     default_cache_behavior {
-#       viewer_protocol_policy = "redirect-to-https"
-#       allowed_methods = [ "GET", "HEAD" ]
-#       target_origin_id = "www_staging_s3_origin"
-#       cached_methods = [ "GET", "HEAD" ]
+    default_cache_behavior {
+      viewer_protocol_policy = "redirect-to-https"
+      allowed_methods = [ "GET", "HEAD" ]
+      target_origin_id = "www_staging_s3_origin"
+      cached_methods = [ "GET", "HEAD" ]
 
-#       forwarded_values {
-#         query_string = false
+      forwarded_values {
+        query_string = false
 
-#         cookies {
-#           forward = "none"
-#         }
-#       }
-#     }
+        cookies {
+          forward = "none"
+        }
+      }
+    }
 
-#     viewer_certificate {
-#       acm_certificate_arn = "arn:aws:acm:us-east-1:084828604403:certificate/59114432-b5de-4dcd-b632-18ce0761e813"
-#       ssl_support_method = "sni-only"
-#     }
+    viewer_certificate {
+      acm_certificate_arn = "arn:aws:acm:us-east-1:084828604403:certificate/59114432-b5de-4dcd-b632-18ce0761e813"
+      ssl_support_method = "sni-only"
+    }
 
-#     restrictions {
-#       geo_restriction {
-#         restriction_type = "none"
-#       }
-#     }
+    restrictions {
+      geo_restriction {
+        restriction_type = "none"
+      }
+    }
 
-#     aliases = ["www.staging.plancraftr.com"]
-#     enabled = true
-#     retain_on_delete = true
-# }
+    aliases = ["www.staging.plancraftr.com"]
+    enabled = true
+    retain_on_delete = true
+}
 
-# resource "aws_cloudfront_distribution" "staging_distribution" {
-#     origin {
-#       domain_name = aws_s3_bucket.staging_plancraftr_com.bucket_regional_domain_name
-#       origin_id = "staging_s3_origin"
-#     }
+resource "aws_cloudfront_distribution" "staging_distribution" {
+    origin {
+      domain_name = aws_s3_bucket.staging_plancraftr_com.bucket_regional_domain_name
+      origin_id = "staging_s3_origin"
+    }
 
-#     default_cache_behavior {
-#       viewer_protocol_policy = "redirect-to-https"
-#       allowed_methods = [ "GET", "HEAD" ]
-#       target_origin_id = "staging_s3_origin"
-#       cached_methods = [ "GET", "HEAD" ]
+    default_cache_behavior {
+      viewer_protocol_policy = "redirect-to-https"
+      allowed_methods = [ "GET", "HEAD" ]
+      target_origin_id = "staging_s3_origin"
+      cached_methods = [ "GET", "HEAD" ]
 
-#       forwarded_values {
-#         query_string = false
+      forwarded_values {
+        query_string = false
 
-#         cookies {
-#           forward = "none"
-#         }
-#       }
-#     }
+        cookies {
+          forward = "none"
+        }
+      }
+    }
 
-#     viewer_certificate {
-#       acm_certificate_arn = "arn:aws:acm:us-east-1:084828604403:certificate/59114432-b5de-4dcd-b632-18ce0761e813"
-#       ssl_support_method = "sni-only"
-#     }
+    viewer_certificate {
+      acm_certificate_arn = "arn:aws:acm:us-east-1:084828604403:certificate/59114432-b5de-4dcd-b632-18ce0761e813"
+      ssl_support_method = "sni-only"
+    }
 
-#     restrictions {
-#       geo_restriction {
-#         restriction_type = "none"
-#       }
-#     }
+    restrictions {
+      geo_restriction {
+        restriction_type = "none"
+      }
+    }
 
-#     aliases = ["staging.plancraftr.com"]
-#     enabled = true
-#     retain_on_delete = true
-# }
+    aliases = ["staging.plancraftr.com"]
+    enabled = true
+    retain_on_delete = true
+}
 
 
 ## Route 53 config
