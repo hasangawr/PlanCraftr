@@ -63,6 +63,14 @@ resource "aws_cloudfront_distribution" "www_staging_distribution" {
       allowed_methods = [ "GET", "HEAD" ]
       target_origin_id = "www_staging_s3_origin"
       cached_methods = [ "GET", "HEAD" ]
+
+      forwarded_values {
+        query_string = false
+
+        cookies {
+          forward = "none"
+        }
+      }
     }
 
     viewer_certificate {
