@@ -188,7 +188,6 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./infrastructure/terraform/staging/
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
@@ -201,14 +200,14 @@ jobs:
           role-session-name: GitHub-OIDC-TERRAFORM
 
       - name: Install dependencies and build
+        working-directory: ./frontend
         run: |
-          cd frontend/
           npm install
           npm run build
 
       - name: Deploy to S3
         run: |
-          aws s3 sync ./dist s3://www.staging.plancraftr.com --delete
+          aws s3 sync ./frontend/dist s3://www.staging.plancraftr.com --delete
 
   # # destroy_after_delay:
   # #   runs-on: ubuntu-latest
