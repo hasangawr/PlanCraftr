@@ -90,7 +90,7 @@ resource "aws_cloudfront_distribution" "www_staging_distribution" {
 
     aliases = ["www.staging.plancraftr.com"]
     enabled = true
-    ##default_root_object = "index.html"
+    default_root_object = "index.html"
     ##retain_on_delete = true
 }
 
