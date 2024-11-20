@@ -184,6 +184,7 @@ jobs:
   deploy_to_s3:
     runs-on: ubuntu-latest
     needs: provision_and_configure
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
     defaults:
       run:
         shell: bash
