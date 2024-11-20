@@ -34,6 +34,8 @@ resource "aws_s3_bucket_policy" "allow_anyone_get_objects_s3_www_staging" {
         }
     ]
   })
+
+  depends_on = [ aws_s3_bucket_public_access_block.allow_public_access_s3_www_staging ]
 }
 
 resource "aws_s3_bucket_website_configuration" "static_website_config_s3_www_staging" {
