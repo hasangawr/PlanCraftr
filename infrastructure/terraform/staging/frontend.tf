@@ -91,7 +91,7 @@ resource "aws_cloudfront_distribution" "www_staging_distribution" {
     aliases = ["www.staging.plancraftr.com"]
     enabled = true
     ##default_root_object = "index.html"
-    retain_on_delete = true
+    ##retain_on_delete = true
 }
 
 resource "aws_cloudfront_distribution" "staging_distribution" {
@@ -129,7 +129,7 @@ resource "aws_cloudfront_distribution" "staging_distribution" {
     aliases = ["staging.plancraftr.com"]
     enabled = true
     default_root_object = "index.html"
-    retain_on_delete = true
+    ##retain_on_delete = true
 }
 
 
