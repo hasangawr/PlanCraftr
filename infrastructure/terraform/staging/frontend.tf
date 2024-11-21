@@ -86,6 +86,14 @@ resource "aws_s3_bucket_website_configuration" "static_website_config_s3_staging
 }
 
 ## Cloudfront config
+resource "aws_cloudfront_function" "routing_handler" {
+  name = "routing_handler"
+  runtime = "cloudfront-js-2.0"
+  comment = "handle routing"
+  publish = true
+  code = file("${path.module}/function.js")
+}
+
 resource "aws_cloudfront_distribution" "www_staging_distribution" {
     origin {
       domain_name = aws_s3_bucket.www_staging_plancraftr_com.bucket_regional_domain_name
@@ -104,6 +112,11 @@ resource "aws_cloudfront_distribution" "www_staging_distribution" {
         cookies {
           forward = "none"
         }
+      }
+
+      function_association {
+        event_type = "viewer-request"
+        function_arn = aws_cloudfront_function.routing_handler.arn
       }
     }
 
