@@ -212,7 +212,7 @@ jobs:
         run: |
           aws s3 sync ./frontend/dist s3://www.staging.plancraftr.com --delete
 
-  # # destroy_after_delay:
+  # # # destroy_after_delay:
   # #   runs-on: ubuntu-latest
   # #   needs: provision_and_configure
   # #   if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
