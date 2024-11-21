@@ -180,3 +180,33 @@ jobs:
             sudo systemctl start caddy
             sudo systemctl restart caddy
           EOF
+
+  deploy_to_s3:
+    runs-on: ubuntu-latest
+    needs: provision_and_configure
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials from AWS account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: GitHub-OIDC-TERRAFORM
+
+      - name: Install dependencies and build
+        working-directory: ./frontend
+        env:
+          LIVE_API_BASE_URL: ${{ secrets.LIVE_API_BASE_URL }}
+        run: |
+          npm install
+          VITE_API=$LIVE_API_BASE_URL npm run build
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync ./frontend/dist s3://www.plancraftr.com --delete
