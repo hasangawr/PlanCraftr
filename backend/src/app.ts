@@ -40,7 +40,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get('/', (req, res) => {
-  res.send('Welcome to PlanCraftr!');
+  res.send('Welcome to PlanCraftr!!!');
 });
 app.use('/auth', authRoutes);
 
