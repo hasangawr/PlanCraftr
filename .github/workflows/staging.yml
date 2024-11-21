@@ -202,9 +202,11 @@ jobs:
 
       - name: Install dependencies and build
         working-directory: ./frontend
+        env:
+          STAGING_API_BASE_URL: ${{ secrets.STAGING_API_BASE_URL }}
         run: |
           npm install
-          npm run build
+          VITE_API=$STAGING_API_BASE_URL npm run build
 
       - name: Deploy to S3
         run: |
