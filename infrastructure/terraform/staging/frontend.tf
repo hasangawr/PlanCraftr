@@ -86,8 +86,8 @@ resource "aws_s3_bucket_website_configuration" "static_website_config_s3_staging
 }
 
 ## Cloudfront config
-resource "aws_cloudfront_function" "routing_handler" {
-  name = "routing_handler"
+resource "aws_cloudfront_function" "staging_routing_handler" {
+  name = "staging_routing_handler"
   runtime = "cloudfront-js-2.0"
   comment = "handle routing"
   publish = true
@@ -116,7 +116,7 @@ resource "aws_cloudfront_distribution" "www_staging_distribution" {
 
       function_association {
         event_type = "viewer-request"
-        function_arn = aws_cloudfront_function.routing_handler.arn
+        function_arn = aws_cloudfront_function.staging_routing_handler.arn
       }
     }
 
