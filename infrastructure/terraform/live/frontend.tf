@@ -139,7 +139,7 @@ resource "aws_cloudfront_distribution" "www_distribution" {
 
 resource "aws_cloudfront_distribution" "distribution" {
     origin {
-      domain_name = aws_s3_bucket.plancraftr_com.website_endpoint
+      domain_name = aws_s3_bucket.plancraftr_com.bucket_regional_domain_name
       origin_id = "s3_origin"
     }
 
