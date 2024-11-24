@@ -139,8 +139,14 @@ resource "aws_cloudfront_distribution" "www_staging_distribution" {
 
 resource "aws_cloudfront_distribution" "staging_distribution" {
     origin {
-      domain_name = aws_s3_bucket.staging_plancraftr_com.bucket_regional_domain_name
+      domain_name = aws_s3_bucket.staging_plancraftr_com.website_endpoint
       origin_id = "staging_s3_origin"
+      custom_origin_config {
+        origin_protocol_policy = "http-only"
+        http_port = 80
+        https_port = 443
+        origin_ssl_protocols = [ "TLSv1.2" ]
+      }
     }
 
     default_cache_behavior {
