@@ -38,35 +38,35 @@ resource "aws_s3_bucket_policy" "allow_anyone_get_objects_s3_www_staging" {
   depends_on = [ aws_s3_bucket_public_access_block.allow_public_access_s3_www_staging ]
 }
 
-resource "aws_s3_bucket_public_access_block" "allow_public_access_s3_staging" {
-  bucket = aws_s3_bucket.staging_plancraftr_com.id
+# resource "aws_s3_bucket_public_access_block" "allow_public_access_s3_staging" {
+#   bucket = aws_s3_bucket.staging_plancraftr_com.id
 
-  block_public_acls = false
-  block_public_policy = false
-  ignore_public_acls = false
-  restrict_public_buckets = false
-}
+#   block_public_acls = false
+#   block_public_policy = false
+#   ignore_public_acls = false
+#   restrict_public_buckets = false
+# }
 
-resource "aws_s3_bucket_policy" "allow_anyone_get_objects_s3_staging" {
-  bucket = aws_s3_bucket.staging_plancraftr_com.id
+# resource "aws_s3_bucket_policy" "allow_anyone_get_objects_s3_staging" {
+#   bucket = aws_s3_bucket.staging_plancraftr_com.id
 
-  policy = jsonencode({
-    "Version": "2012-10-17",
-    "Id": "PlancraftrS3AccessPolicy",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": [
-              "s3:GetObject"
-            ],
-            "Resource": "arn:aws:s3:::staging.plancraftr.com/*"
-        }
-    ]
-  })
+#   policy = jsonencode({
+#     "Version": "2012-10-17",
+#     "Id": "PlancraftrS3AccessPolicy",
+#     "Statement": [
+#         {
+#             "Effect": "Allow",
+#             "Principal": "*",
+#             "Action": [
+#               "s3:GetObject"
+#             ],
+#             "Resource": "arn:aws:s3:::staging.plancraftr.com/*"
+#         }
+#     ]
+#   })
 
-  depends_on = [ aws_s3_bucket_public_access_block.allow_public_access_s3_staging ]
-}
+#   depends_on = [ aws_s3_bucket_public_access_block.allow_public_access_s3_staging ]
+# }
 
 resource "aws_s3_bucket_website_configuration" "static_website_config_s3_www_staging" {
   bucket = aws_s3_bucket.www_staging_plancraftr_com.id
