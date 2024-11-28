@@ -12,6 +12,8 @@ const passportConfig = (_passport: passport.PassportStatic) => {
       },
       async (accessToken, refreshToken, profile, done) => {
         const newUser = {
+          authType: 'google',
+          email: profile.emails?.at(0)?.value,
           googleId: profile.id,
           name: profile.displayName,
           firstName: profile.name?.givenName,

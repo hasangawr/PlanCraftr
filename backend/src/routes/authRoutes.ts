@@ -13,7 +13,10 @@ router.post('/register', register);
 router.post('/login', authenticate);
 router.delete('/logout', logout);
 router.get('/verify', verify);
-router.get('/google', passport.authenticate('google', { scope: ['profile'] }));
+router.get(
+  '/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] }),
+);
 router.get(
   '/google/callback',
   passport.authenticate('google', {

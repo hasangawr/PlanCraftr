@@ -3,6 +3,7 @@ import { Schema, model } from 'mongoose';
 export interface IUser {
   name: string;
   email: string;
+  authType: string;
   password: string;
   googleId: string;
   firstName: string;
@@ -13,19 +14,42 @@ export interface IUser {
 
 const userSchema = new Schema<IUser>({
   name: { type: String, required: true },
-  email: { type: String },
-  password: { type: String },
+  email: { type: String, required: true },
+  authType: {
+    type: String,
+    enum: ['direct', 'google'],
+    default: 'direct',
+    required: true,
+  },
+  password: {
+    type: String,
+    required: function () {
+      return this.authType === 'direct';
+    },
+  },
   googleId: {
     type: String,
+    required: function () {
+      return this.authType === 'google';
+    },
   },
   firstName: {
     type: String,
+    required: function () {
+      return this.authType === 'google';
+    },
   },
   lastName: {
     type: String,
+    required: function () {
+      return this.authType === 'google';
+    },
   },
   image: {
     type: String,
+    required: function () {
+      return this.authType === 'google';
+    },
   },
   createdAt: {
     type: Date,
