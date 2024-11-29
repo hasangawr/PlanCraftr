@@ -1,13 +1,49 @@
 import { Box } from '@mui/material';
-import { Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import Hero from '../components/Hero';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const HomeLayout = () => {
-  return (
+  const [isUnauthenticated, setIsUnauthenticated] = useState<boolean | null>(
+    null,
+  );
+
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API}/auth/verify`,
+          {
+            withCredentials: true,
+          },
+        );
+
+        if (response.data.message === 'Unauthorized') {
+          setIsUnauthenticated(true);
+        } else {
+          setIsUnauthenticated(false);
+        }
+      } catch (error) {
+        console.log(error);
+        setIsUnauthenticated(true);
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
+
+  if (isUnauthenticated === null) {
+    return <div>Loading...</div>;
+  }
+
+  return isUnauthenticated ? (
     <Box sx={{ height: '100vh', display: 'flex' }}>
       <Hero />
       <Outlet />
     </Box>
+  ) : (
+    <Navigate to="/dashboard" />
   );
 };
 

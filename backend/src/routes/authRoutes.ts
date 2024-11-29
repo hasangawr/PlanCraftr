@@ -1,13 +1,31 @@
 import { Router } from 'express';
-import { authenticate, register, verify } from '../controllers/authController';
+import {
+  //authenticate,
+  logout,
+  register,
+  verify,
+} from '../controllers/authController';
 import passport from 'passport';
 
 const router = Router();
 
+// Direct auth routes
 router.post('/register', register);
-router.post('/login', authenticate);
+router.post(
+  '/login',
+  passport.authenticate('local', { failureRedirect: process.env.FRONTEND_URL }), // *** make redirect work ***
+  (req, res) => {
+    res.status(200).send({ message: 'Login Successful' }); // *** make redirect work ***
+  },
+);
+router.delete('/logout', logout);
 router.get('/verify', verify);
-router.get('/google', passport.authenticate('google', { scope: ['profile'] }));
+
+// Google auth routes
+router.get(
+  '/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] }),
+);
 router.get(
   '/google/callback',
   passport.authenticate('google', {
