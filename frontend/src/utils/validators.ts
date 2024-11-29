@@ -18,3 +18,14 @@ export const passwordValidator = (password: string): string | boolean => {
 
   return false;
 };
+
+export const nameValidator = (name: string): string | boolean => {
+  const minLength = 2;
+  const trimmedName = name.trim();
+
+  if (trimmedName.length < minLength) {
+    return `Name must be at least ${minLength} characters long`;
+  }
+
+  return false;
+};
