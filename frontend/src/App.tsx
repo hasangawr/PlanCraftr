@@ -6,6 +6,7 @@ import RegisterForm from './components/RegisterForm';
 import HomeLayout from './layouts/HomeLayout';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
+import Terms from './pages/Terms';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route index element={<LoginForm />} />
           <Route path="register" element={<RegisterForm />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="/terms" element={<Terms />} />
         </Route>
         <Route path="/dashboard" element={<ProtectedRoutes />}>
           <Route index element={<Dashboard />} />

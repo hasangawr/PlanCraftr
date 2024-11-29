@@ -38,9 +38,11 @@ const LoginForm = () => {
           { withCredentials: true },
         );
 
-        console.log('login response: ', response);
-
-        if (response.status === 200 && response.data.id) {
+        //console.log('login response: ', response);
+        if (
+          response.status === 200 &&
+          response.data.message === 'Login Successful'
+        ) {
           navigate('/dashboard');
         }
       } catch (error) {
