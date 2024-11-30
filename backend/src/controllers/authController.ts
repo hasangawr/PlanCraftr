@@ -47,6 +47,9 @@ export const register = async (req: Request, res: Response) => {
 // };
 
 export const verify = async (req: Request, res: Response) => {
+  console.log(
+    `verify request - isAuthenticated - isUnauthenticated - user: ${req.isAuthenticated()} - ${req.isUnauthenticated()} - ${req.user}`,
+  );
   try {
     if (req.isUnauthenticated()) {
       return res.status(401).json({ message: 'Unauthorized' });
