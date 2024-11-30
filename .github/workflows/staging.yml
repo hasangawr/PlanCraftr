@@ -147,6 +147,7 @@ jobs:
             mkdir -p ~/app && cd ~/app
             git clone https://github.com/hasangawr/PlanCraftr.git .
             git checkout dev
+            git pull
             cd backend
 
             # Set up environment and install dependencies

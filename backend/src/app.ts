@@ -6,6 +6,7 @@ import passport from 'passport';
 import passportConfig from './config/passport';
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
+import MongoStore from 'connect-mongo';
 
 const app = express();
 
@@ -18,6 +19,8 @@ const corsOptions = {
   credentials: true,
   optionSuccessStatus: 200,
 };
+
+app.set('trust proxy', true);
 
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -33,6 +36,9 @@ app.use(
       httpOnly: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
     },
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+    }),
   }),
 );
 

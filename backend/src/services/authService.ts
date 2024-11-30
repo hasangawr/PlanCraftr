@@ -15,6 +15,7 @@ export const registerUser = async (
     const newUser = new User({
       name,
       email,
+      authType: 'direct',
       password: hash,
     });
 
@@ -28,12 +29,13 @@ export const registerUser = async (
 
 export const authenticateUser = async (email: string, password: string) => {
   const user = await User.findOne({ email });
-  if (user) {
+  if (user && user.authType !== 'google') {
     const passwordVerified = await argon2.verify(
       user.password as string,
       password,
     );
-    if (passwordVerified) return { id: user._id, name: user.name, email };
+    if (passwordVerified)
+      return { _id: user._id, name: user.name, email, authType: user.authType };
   }
   return null;
 };
