@@ -50,8 +50,7 @@ const RegisterForm = () => {
         console.log('Registration response: ', response);
 
         if (response.status === 201 && response.data.email) {
-          // navigate to a success page
-          navigate('/');
+          navigate('/verify-email');
         }
       } catch (error) {
         console.log('Registration failed: ', error);

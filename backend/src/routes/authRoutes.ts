@@ -4,6 +4,7 @@ import {
   logout,
   register,
   verify,
+  verifyEmail,
 } from '../controllers/authController';
 import passport from 'passport';
 
@@ -11,6 +12,7 @@ const router = Router();
 
 // Direct auth routes
 router.post('/register', register);
+router.get('/verify-email', verifyEmail);
 router.post(
   '/login',
   passport.authenticate('local', { failureRedirect: process.env.FRONTEND_URL }), // *** make redirect work ***
