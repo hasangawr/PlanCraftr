@@ -9,9 +9,10 @@ const connectDB = async () => {
     console.log('Successfully connected to the database!');
 
     // const user = new User({
-    //   name: "Bill",
-    //   email: "bill@initech1.com",
-    //   avatar: "https://i.imgur.com/dM7Thhn.png",
+    //   name: 'Bill',
+    //   email: 'bill@initech1.com',
+    //   authType: 'direct',
+    //   password: 'test',
     // });
 
     // await user.save();

@@ -1,6 +1,8 @@
 import User from '../models/user';
 import argon2 from 'argon2';
 import { validateToken } from '../utils/jwt';
+import TempUser from '../models/tempUser';
+import { formatMail, sendMail } from '../config/email';
 
 export const registerUser = async (
   name: string,
@@ -8,23 +10,56 @@ export const registerUser = async (
   password: string,
 ) => {
   const user = await User.findOne({ email });
+  const tempUser = await TempUser.findOne({ email });
 
-  if (!user) {
+  if (!user && !tempUser) {
     const hash = await argon2.hash(password);
 
-    const newUser = new User({
+    const newUser = new TempUser({
       name,
       email,
       authType: 'direct',
       password: hash,
     });
 
-    await newUser.save();
+    const user = await newUser.save();
+
+    //send email
+    const mail = formatMail(
+      `${process.env.BASE_API_URL}/auth/verify-email?key=${user.key}`,
+    );
+    await sendMail(
+      '"Admin Team - PlanCraftr" <admin-team@plancraftr.com>',
+      email,
+      'Verify Email',
+      mail,
+    );
 
     return { name, email };
   }
 
   return null;
+};
+
+export const verifyUserEmail = async (key: string) => {
+  const tempUser = await TempUser.findOne({ key });
+
+  if (tempUser) {
+    const verifiedUser = new User({
+      name: tempUser.name,
+      email: tempUser.email,
+      authType: tempUser.authType,
+      password: tempUser.password,
+    });
+
+    await verifiedUser.save();
+
+    await tempUser.deleteOne();
+
+    return true;
+  }
+
+  return false;
 };
 
 export const authenticateUser = async (email: string, password: string) => {

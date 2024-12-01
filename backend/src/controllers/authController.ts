@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { registerUser } from '../services/authService';
+import { registerUser, verifyUserEmail } from '../services/authService';
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -19,6 +19,40 @@ export const register = async (req: Request, res: Response) => {
   } catch (error) {
     console.log('error: ', error);
     res.send('Registration failed. Try again').status(500);
+  }
+};
+
+export const verifyEmail = async (req: Request, res: Response) => {
+  // TODO: check whether the key is a valid UUID
+
+  try {
+    const key = req.query.key;
+
+    if (key) {
+      const userVerified = await verifyUserEmail(key as string);
+
+      if (userVerified) {
+        return (
+          res
+            // .json({
+            //   message: 'Email successfully verified. Please login to continue.',
+            // })
+            .redirect(process.env.FRONTEND_URL as string)
+        );
+      }
+
+      return res
+        .status(401)
+        .json({ message: 'Verification link expired. Please register again.' });
+      //.redirect(`${process.env.FRONTEND_URL}/register`);
+    }
+  } catch (error) {
+    console.error('Email verification failed: ', error);
+    return res.status(500).json({
+      message:
+        'Email verification failed. Please register again in few minutes.',
+    });
+    //.redirect(`${process.env.FRONTEND_URL}/register`);
   }
 };
 
