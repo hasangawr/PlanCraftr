@@ -1,50 +1,37 @@
 import { Box, Button, Link, Paper, TextField, Typography } from '@mui/material';
-import { ArrowBack } from '@mui/icons-material';
 import axios from 'axios';
-import { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { emailValidator } from '../utils/validators';
-import { EmailContext } from '../contexts/EmailProvider';
+import { useState } from 'react';
+import { passwordValidator } from '../utils/validators';
+import { ArrowBack } from '@mui/icons-material';
 
-const ForgotPassword = () => {
-  const emailContext = useContext(EmailContext);
-
-  const [email, setEmail] = useState<string>('');
-  const [emailError, setEmailError] = useState<boolean | string>(false);
-
-  const navigate = useNavigate();
-
-  // display error frontend
-  //useEffect(() => {}, []);
+const ResetPassword = () => {
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [passwordError, setPasswordError] = useState<boolean | string>(false);
+  const [confirmPasswordError, setConfirmPasswordError] = useState<
+    boolean | string
+  >(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!email) {
-      if (!email) setEmailError('Email is required');
+    if (!password || !confirmPassword) {
+      if (!password) setPasswordError('Password is required');
+      if (!confirmPassword) setConfirmPasswordError('Enter password again');
       return;
     }
 
-    if (!emailError) {
-      emailContext?.setForgotPasswordEmail(email);
-
+    if (!passwordError && !confirmPasswordError) {
       try {
-        const response = await axios.post(
-          `${import.meta.env.VITE_API}/auth/forgot-password`,
-          { email },
+        const response = await axios.put(
+          `${import.meta.env.VITE_API}/auth/reset-password`,
+          { password },
           { withCredentials: true },
         );
 
-        console.log('Forgot password response: ', response);
-
-        if (
-          response.status === 200 &&
-          response.data.message === 'Password reset link sent'
-        ) {
-          navigate('/reset-password-message');
-        }
+        console.log('Password reset response: ', response);
       } catch (error) {
-        console.log('Password reset request failed: ', error);
+        console.log('Password reset failed: ', error);
       }
     }
   };
@@ -103,35 +90,49 @@ const ForgotPassword = () => {
             </Typography>
           </Box>
         </Box>
-        <Box sx={{ marginTop: '2.5rem' }}>
+        <Box sx={{ marginTop: '2rem' }}>
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-            Forgot password
+            Reset password
           </Typography>
         </Box>
-        <Box className="forgot-password-form">
+        <Box className="reset-password-form">
           <Box component="form" onSubmit={handleSubmit} noValidate>
             <TextField
-              id="email"
-              label="Email"
+              id="password"
+              label="Password"
               variant="outlined"
-              type="email"
+              type="password"
               fullWidth
               sx={{ marginTop: '2rem' }}
               onChange={(e) => {
-                setEmailError(emailValidator(e.target.value));
-                setEmail(e.target.value);
+                setPasswordError(passwordValidator(e.target.value));
+                setPassword(e.target.value);
               }}
-              error={emailError ? true : false}
-              helperText={emailError}
+              error={passwordError ? true : false}
+              helperText={passwordError}
+            />
+            <TextField
+              id="confirm-password"
+              label="Password (Confirm)"
+              variant="outlined"
+              type="password"
+              fullWidth
+              sx={{ marginTop: '2rem' }}
+              onChange={(e) => {
+                setPasswordError(passwordValidator(e.target.value));
+                setConfirmPassword(e.target.value);
+              }}
+              error={passwordError ? true : false}
+              helperText={passwordError}
             />
             <Button
               variant="contained"
               fullWidth
               sx={{ backgroundColor: '#6366F1', marginTop: '1.5rem' }}
-              aria-label="Register"
+              aria-label="Reset"
               type="submit"
             >
-              Send Reset Link
+              Reset
             </Button>
           </Box>
         </Box>
@@ -140,4 +141,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default ResetPassword;

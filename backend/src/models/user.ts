@@ -10,7 +10,15 @@ export interface IUser {
   firstName: string;
   lastName: string;
   image: string;
+  key?: string;
   createdAt: Date;
+}
+
+export interface ISafeUser {
+  _id: ObjectId;
+  name: string;
+  email: string;
+  authType: string;
 }
 
 const userSchema = new Schema<IUser>({
@@ -51,6 +59,10 @@ const userSchema = new Schema<IUser>({
     required: function () {
       return this.authType === 'google';
     },
+  },
+  key: {
+    type: String,
+    default: 'none',
   },
   createdAt: {
     type: Date,

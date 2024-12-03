@@ -1,8 +1,9 @@
-import User from '../models/user';
+import User, { ISafeUser } from '../models/user';
 import argon2 from 'argon2';
 import { validateToken } from '../utils/jwt';
 import TempUser from '../models/tempUser';
 import { formatMail, sendMail } from '../config/email';
+import { randomUUID } from 'crypto';
 
 export const registerUser = async (
   name: string,
@@ -27,6 +28,7 @@ export const registerUser = async (
     //send email
     const mail = formatMail(
       `${process.env.BASE_API_URL}/auth/verify-email?key=${user.key}`,
+      'Click To Verify Email',
     );
     await sendMail(
       '"Admin Team - PlanCraftr" <admin-team@plancraftr.com>',
@@ -78,4 +80,77 @@ export const authenticateUser = async (email: string, password: string) => {
 export const verifyUser = (token: string) => {
   const user = validateToken(token);
   return user;
+};
+
+export const getUserByEmail = async (
+  email: string,
+): Promise<boolean | ISafeUser> => {
+  const user = await User.findOne({ email }).select('-password');
+  if (user) {
+    return user;
+  }
+  return false;
+};
+
+export const getUserByKey = async (key: string) => {
+  const user = await User.findOne({ key }).select('-password');
+  if (user) {
+    return user;
+  }
+  return false;
+};
+
+export const sendPasswordResetLink = async (email: string) => {
+  const user = await User.findOne({ email });
+
+  if (user) {
+    user.set('key', randomUUID());
+    await user.save();
+
+    const mail = formatMail(
+      `${process.env.BASE_API_URL}/auth/forgot-password?key=${user.key}`,
+      'Click To Reset Password',
+    );
+
+    await sendMail(
+      '"Admin Team - PlanCraftr" <admin-team@plancraftr.com>',
+      user.email,
+      'Reset Password',
+      mail,
+    );
+
+    return true;
+  }
+
+  return false;
+};
+
+export const checkForgotPasswordInitiated = async (email: string) => {
+  const user = await User.findOne({ email });
+
+  if (user && user.key) {
+    return true;
+  }
+
+  return false;
+};
+
+export const resetUserPassword = async (
+  email: string,
+  password: string,
+  key: string,
+) => {
+  const user = await User.findOne({ email });
+
+  if (user && user.key && user.key === key) {
+    const hash = await argon2.hash(password);
+    user.password = hash;
+    delete user.key;
+
+    await user.save();
+
+    return true;
+  }
+
+  return false;
 };
