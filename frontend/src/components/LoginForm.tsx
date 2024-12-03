@@ -12,12 +12,14 @@ import { emailValidator, passwordValidator } from '../utils/validators';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import GoogleLoginButton from './GoogleLoginButton';
+import AlertSnackBar from './AlertSnackBar';
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [emailError, setEmailError] = useState<boolean | string>(false);
   const [passwordError, setPasswordError] = useState<boolean | string>(false);
+  const [alertOpen, setAlertOpen] = useState<boolean>(false);
 
   const navigate = useNavigate();
 
@@ -38,14 +40,18 @@ const LoginForm = () => {
           { withCredentials: true },
         );
 
-        //console.log('login response: ', response);
         if (
           response.status === 200 &&
           response.data.message === 'Login Successful'
         ) {
+          setEmail('');
+          setPassword('');
           navigate('/dashboard');
+        } else {
+          setAlertOpen(true);
         }
       } catch (error) {
+        setAlertOpen(true);
         console.log('login failed: ', error);
       }
     }
@@ -61,6 +67,15 @@ const LoginForm = () => {
         alignItems: 'center',
       }}
     >
+      {
+        <AlertSnackBar
+          open={alertOpen}
+          setOpen={setAlertOpen}
+          displayDuration={5000}
+          severity="error"
+          message="Invalid credentials. Please check your username and password and try again."
+        />
+      }
       <Paper elevation={3} sx={{ padding: '2rem', margin: '0 4rem' }}>
         <Box sx={{ display: 'flex' }}>
           <Box sx={{ marginRight: '10px' }}>
