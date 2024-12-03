@@ -1,4 +1,4 @@
-import { Box } from '@mui/material';
+import { Box, CircularProgress } from '@mui/material';
 import { Navigate, Outlet } from 'react-router-dom';
 import Hero from '../components/Hero';
 import { useEffect, useState } from 'react';
@@ -34,7 +34,11 @@ const HomeLayout = () => {
   }, []);
 
   if (isUnauthenticated === null) {
-    return <div>Loading...</div>;
+    return (
+      <Box sx={{ display: 'flex' }}>
+        <CircularProgress />
+      </Box>
+    );
   }
 
   return isUnauthenticated ? (
