@@ -15,6 +15,7 @@ import {
   nameValidator,
   passwordValidator,
 } from '../utils/validators';
+import AlertSnackBar from './AlertSnackBar';
 
 const RegisterForm = () => {
   const [name, setName] = useState<string>('');
@@ -25,6 +26,8 @@ const RegisterForm = () => {
   const [emailError, setEmailError] = useState<boolean | string>(false);
   const [passwordError, setPasswordError] = useState<boolean | string>(false);
   const [termsError, setTermsError] = useState<boolean | string>(false);
+  const [alertOpen, setAlertOpen] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
 
   const navigate = useNavigate();
 
@@ -50,10 +53,18 @@ const RegisterForm = () => {
         console.log('Registration response: ', response);
 
         if (response.status === 201 && response.data.email) {
+          setName('');
+          setEmail('');
+          setPassword('');
           navigate('/verify-email');
+        } else {
+          setAlertMessage(response.data.message);
+          setAlertOpen(true);
         }
       } catch (error) {
         console.log('Registration failed: ', error);
+        setAlertMessage('Registration failed. Try again');
+        setAlertOpen(true);
       }
     }
   };
@@ -68,6 +79,13 @@ const RegisterForm = () => {
         alignItems: 'center',
       }}
     >
+      <AlertSnackBar
+        open={alertOpen}
+        setOpen={setAlertOpen}
+        displayDuration={5000}
+        severity="error"
+        message={alertMessage}
+      />
       <Paper elevation={3} sx={{ padding: '2rem', margin: '0 4rem' }}>
         <Box sx={{ display: 'flex' }}>
           <Box sx={{ marginRight: '10px' }}>

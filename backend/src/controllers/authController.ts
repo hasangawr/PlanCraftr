@@ -20,13 +20,13 @@ export const register = async (req: Request, res: Response) => {
     if (response) {
       res.status(201).json(response);
     } else {
-      res
-        .status(409)
-        .send('User with this email already exist. Use different email');
+      res.send({
+        message: 'User with this email already exist. Use different email',
+      });
     }
   } catch (error) {
     console.log('error: ', error);
-    res.send('Registration failed. Try again').status(500);
+    res.send({ message: 'Registration failed. Try again' });
   }
 };
 
