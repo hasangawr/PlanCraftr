@@ -20,7 +20,6 @@ function App() {
           <Route index element={<LoginForm />} />
           <Route path="register" element={<RegisterForm />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
-          <Route path="terms" element={<Terms />} />
           <Route path="verify-email" element={<VerifyEmail />} />
           {/* <Route path="" element={<ProtectResetPasswordRoutes />}> */}
           <Route
@@ -30,6 +29,7 @@ function App() {
           <Route path="reset-password" element={<ResetPassword />} />
         </Route>
         {/* </Route> */}
+        <Route path="/terms" element={<Terms />} />
         <Route path="/dashboard" element={<ProtectedRoutes />}>
           <Route index element={<Dashboard />} />
         </Route>
