@@ -45,7 +45,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
             // .json({
             //   message: 'Email successfully verified. Please login to continue.',
             // })
-            .redirect(process.env.FRONTEND_URL as string)
+            .redirect(`${process.env.FRONTEND_URL}/login` as string)
         );
       }
 

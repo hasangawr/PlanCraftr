@@ -16,6 +16,7 @@ const AlertSnackBar: React.FC<AlertSnackBarProps> = (props) => {
     reason?: SnackbarCloseReason,
   ) => {
     if (reason === 'clickaway') {
+      console.log(event);
       return;
     }
 
