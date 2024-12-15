@@ -1,9 +1,14 @@
 import { Router } from 'express';
 import {
+  forgotPassword,
+  forgotPasswordInitiated,
+  forgotPasswordVerify,
   //authenticate,
   logout,
   register,
+  resetPassword,
   verify,
+  verifyEmail,
 } from '../controllers/authController';
 import passport from 'passport';
 
@@ -11,15 +16,27 @@ const router = Router();
 
 // Direct auth routes
 router.post('/register', register);
+router.get('/verify-email', verifyEmail);
 router.post(
   '/login',
-  passport.authenticate('local', { failureRedirect: process.env.FRONTEND_URL }), // *** make redirect work ***
+  passport.authenticate('local', {
+    failureRedirect: process.env.FRONTEND_URL,
+    failWithError: false,
+  }),
   (req, res) => {
-    res.status(200).send({ message: 'Login Successful' }); // *** make redirect work ***
+    if (req.isAuthenticated()) {
+      return res.status(200).send({ message: 'Login Successful' });
+    }
+
+    return res.status(401).send({ message: 'Login Failed' });
   },
 );
 router.delete('/logout', logout);
 router.get('/verify', verify);
+router.get('/forgot-password', forgotPasswordVerify);
+router.post('/forgot-password', forgotPassword);
+router.get('/forgot-password-initiated', forgotPasswordInitiated);
+router.put('/reset-password', resetPassword);
 
 // Google auth routes
 router.get(
