@@ -1,46 +1,51 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography, useTheme } from '@mui/material';
 
 const Hero = () => {
+  const theme = useTheme();
+
   return (
     <Box
       sx={{
-        background:
-          'linear-gradient(109.6deg, rgb(20, 30, 48) 11.2%, rgb(36, 59, 85) 91.1%);',
-        height: '100vh',
         display: 'flex',
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
+        position: 'relative',
+        top: '25%',
+        //marginLeft: '-6rem',
       }}
     >
-      <Box sx={{ flex: '0 1 49rem' }}>
-        <Box>
-          <Typography
-            variant="h2"
-            sx={{ fontWeight: 'bold', color: '#ffffff' }}
-          >
-            Welcome to PlanCraftr
-          </Typography>
-        </Box>
-        <Box>
-          <Typography sx={{ color: '#6C737F' }}>
-            Welcome to your personal productivity hub! Plan your goals, break
-            them into tasks, and track your progress—all in one place. Let’s
-            achieve more, step by step!
-          </Typography>
-        </Box>
-        <Box>
-          <Box sx={{ marginTop: '1.5rem' }}>
-            <Typography sx={{ color: '#6C737F' }}>
-              "Success is the sum of small efforts, repeated day in and day
-              out."
-            </Typography>
-          </Box>
-          <Box>
-            <Typography sx={{ color: '#6C737F', fontStyle: 'italic' }}>
-              – Robert Collier
-            </Typography>
-          </Box>
-        </Box>
+      <Box>
+        <Typography
+          variant="h1"
+          sx={{
+            fontWeight: 'bold',
+            color: theme.palette.background.default,
+            letterSpacing: '0.25em',
+          }}
+        >
+          Plan. Track. Succeed.
+        </Typography>
+      </Box>
+      <Box sx={{ marginTop: '0.75rem' }}>
+        <Typography
+          variant="h2"
+          sx={{
+            color: theme.palette.grayPrimary.main,
+          }}
+        >
+          Your all-in-one platform for setting goals, tracking habits, and
+          unlocking your full potential
+        </Typography>
+      </Box>
+      <Box sx={{ marginTop: '1.5rem' }}>
+        <Button
+          variant="outlined"
+          href="/register"
+          sx={{ padding: '0.5rem 1.5rem' }}
+        >
+          start for free
+        </Button>
       </Box>
     </Box>
   );

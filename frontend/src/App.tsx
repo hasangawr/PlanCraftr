@@ -10,6 +10,7 @@ import Terms from './pages/Terms';
 import VerifyEmail from './pages/VerifyEmail';
 import ResetPasswordMessage from './pages/ResetPasswordMessage';
 import ResetPassword from './components/ResetPassword';
+import Home from './pages/Home';
 //import ProtectResetPasswordRoutes from './components/ProtectResetPasswordRoutes';
 
 function App() {
@@ -17,7 +18,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomeLayout />}>
-          <Route index element={<LoginForm />} />
+          <Route index element={<Home />} />
+          <Route path="login" element={<LoginForm />} />
           <Route path="register" element={<RegisterForm />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="verify-email" element={<VerifyEmail />} />
