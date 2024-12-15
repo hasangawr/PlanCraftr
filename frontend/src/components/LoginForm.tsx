@@ -7,17 +7,23 @@ import {
   Paper,
   TextField,
   Typography,
+  useTheme,
 } from '@mui/material';
 import { emailValidator, passwordValidator } from '../utils/validators';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import GoogleLoginButton from './GoogleLoginButton';
+import AlertSnackBar from './AlertSnackBar';
+import NotesRoundedIcon from '@mui/icons-material/NotesRounded';
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [emailError, setEmailError] = useState<boolean | string>(false);
   const [passwordError, setPasswordError] = useState<boolean | string>(false);
+  const [alertOpen, setAlertOpen] = useState<boolean>(false);
+
+  const theme = useTheme();
 
   const navigate = useNavigate();
 
@@ -38,14 +44,18 @@ const LoginForm = () => {
           { withCredentials: true },
         );
 
-        //console.log('login response: ', response);
         if (
           response.status === 200 &&
           response.data.message === 'Login Successful'
         ) {
+          setEmail('');
+          setPassword('');
           navigate('/dashboard');
+        } else {
+          setAlertOpen(true);
         }
       } catch (error) {
+        setAlertOpen(true);
         console.log('login failed: ', error);
       }
     }
@@ -61,35 +71,40 @@ const LoginForm = () => {
         alignItems: 'center',
       }}
     >
-      <Paper elevation={3} sx={{ padding: '2rem', margin: '0 4rem' }}>
-        <Box sx={{ display: 'flex' }}>
-          <Box sx={{ marginRight: '10px' }}>
-            <svg
-              id="logo-35"
-              width="50"
-              height="39"
-              viewBox="0 0 50 39"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {' '}
-              <path
-                d="M16.4992 2H37.5808L22.0816 24.9729H1L16.4992 2Z"
-                className="ccompli1"
-                fill="#007AFF"
-              ></path>{' '}
-              <path
-                d="M17.4224 27.102L11.4192 36H33.5008L49 13.0271H32.7024L23.2064 27.102H17.4224Z"
-                className="ccustom"
-                fill="#312ECB"
-              ></path>{' '}
-            </svg>
+      {
+        <AlertSnackBar
+          open={alertOpen}
+          setOpen={setAlertOpen}
+          displayDuration={5000}
+          severity="error"
+          message="Invalid credentials. Please check your username and password and try again."
+        />
+      }
+      <Paper
+        elevation={3}
+        sx={{
+          padding: '2rem',
+          margin: '0 4rem',
+          maxWidth: '25rem',
+          backgroundColor: theme.palette.graySecondary.main,
+        }}
+      >
+        <Box
+          sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+          onClick={() => {
+            navigate('/');
+          }}
+        >
+          <Box sx={{ marginRight: '5px' }}>
+            <NotesRoundedIcon sx={{ color: theme.palette.bluePrimary.main }} />
           </Box>
-          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-            Plan<span style={{ color: '#6366F1' }}>Craftr</span>
-          </Typography>
+          <Box sx={{ marginBottom: '5px' }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              Plan<span style={{ color: '#6366F1' }}>Craftr</span>
+            </Typography>
+          </Box>
         </Box>
-        <Box sx={{ marginTop: '2rem' }}>
+        <Box sx={{ marginTop: '1rem' }}>
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
             Log in
           </Typography>
@@ -104,7 +119,7 @@ const LoginForm = () => {
             </Link>
           </Typography>
         </Box>
-        <Box className="login-form" marginTop="2rem">
+        <Box className="login-form" marginTop="1.5rem">
           <Box component="form" onSubmit={handleSubmit} noValidate>
             <TextField
               id="email"
@@ -125,7 +140,7 @@ const LoginForm = () => {
               variant="outlined"
               type="password"
               fullWidth
-              sx={{ marginTop: '2rem' }}
+              sx={{ marginTop: '1rem' }}
               onChange={(e) => {
                 setPasswordError(passwordValidator(e.target.value));
                 setPassword(e.target.value);

@@ -6,6 +6,7 @@ import {
   Paper,
   TextField,
   Typography,
+  useTheme,
 } from '@mui/material';
 import axios from 'axios';
 import { useState } from 'react';
@@ -15,6 +16,8 @@ import {
   nameValidator,
   passwordValidator,
 } from '../utils/validators';
+import AlertSnackBar from './AlertSnackBar';
+import NotesRoundedIcon from '@mui/icons-material/NotesRounded';
 
 const RegisterForm = () => {
   const [name, setName] = useState<string>('');
@@ -25,8 +28,12 @@ const RegisterForm = () => {
   const [emailError, setEmailError] = useState<boolean | string>(false);
   const [passwordError, setPasswordError] = useState<boolean | string>(false);
   const [termsError, setTermsError] = useState<boolean | string>(false);
+  const [alertOpen, setAlertOpen] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
 
   const navigate = useNavigate();
+
+  const theme = useTheme();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -50,10 +57,18 @@ const RegisterForm = () => {
         console.log('Registration response: ', response);
 
         if (response.status === 201 && response.data.email) {
+          setName('');
+          setEmail('');
+          setPassword('');
           navigate('/verify-email');
+        } else {
+          setAlertMessage(response.data.message);
+          setAlertOpen(true);
         }
       } catch (error) {
         console.log('Registration failed: ', error);
+        setAlertMessage('Registration failed. Try again');
+        setAlertOpen(true);
       }
     }
   };
@@ -68,42 +83,45 @@ const RegisterForm = () => {
         alignItems: 'center',
       }}
     >
-      <Paper elevation={3} sx={{ padding: '2rem', margin: '0 4rem' }}>
-        <Box sx={{ display: 'flex' }}>
-          <Box sx={{ marginRight: '10px' }}>
-            <svg
-              id="logo-35"
-              width="50"
-              height="39"
-              viewBox="0 0 50 39"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              {' '}
-              <path
-                d="M16.4992 2H37.5808L22.0816 24.9729H1L16.4992 2Z"
-                className="ccompli1"
-                fill="#007AFF"
-              ></path>{' '}
-              <path
-                d="M17.4224 27.102L11.4192 36H33.5008L49 13.0271H32.7024L23.2064 27.102H17.4224Z"
-                className="ccustom"
-                fill="#312ECB"
-              ></path>{' '}
-            </svg>
+      <AlertSnackBar
+        open={alertOpen}
+        setOpen={setAlertOpen}
+        displayDuration={5000}
+        severity="error"
+        message={alertMessage}
+      />
+      <Paper
+        elevation={3}
+        sx={{
+          padding: '2rem',
+          margin: '0 4rem',
+          maxWidth: '25rem',
+          backgroundColor: theme.palette.graySecondary.main,
+        }}
+      >
+        <Box
+          sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+          onClick={() => {
+            navigate('/');
+          }}
+        >
+          <Box sx={{ marginRight: '5px' }}>
+            <NotesRoundedIcon sx={{ color: theme.palette.bluePrimary.main }} />
           </Box>
-          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-            Plan<span style={{ color: '#6366F1' }}>Craftr</span>
-          </Typography>
+          <Box sx={{ marginBottom: '5px' }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              Plan<span style={{ color: '#6366F1' }}>Craftr</span>
+            </Typography>
+          </Box>
         </Box>
-        <Box sx={{ marginTop: '2rem' }}>
+        <Box sx={{ marginTop: '1rem' }}>
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
             Register
           </Typography>
           <Typography sx={{ color: '#6C737F' }}>
             Already have an account?{' '}
             <Link
-              href="/"
+              href="/login"
               sx={{ color: '#6366F1', cursor: 'pointer' }}
               underline="none"
             >
@@ -111,7 +129,7 @@ const RegisterForm = () => {
             </Link>
           </Typography>
         </Box>
-        <Box className="login-form" marginTop="2rem">
+        <Box className="register-form" marginTop="1.5rem">
           <Box component="form" onSubmit={handleSubmit} noValidate>
             <TextField
               id="name"
@@ -132,7 +150,7 @@ const RegisterForm = () => {
               variant="outlined"
               type="email"
               fullWidth
-              sx={{ marginTop: '2rem' }}
+              sx={{ marginTop: '1rem' }}
               onChange={(e) => {
                 setEmailError(emailValidator(e.target.value));
                 setEmail(e.target.value);
@@ -146,7 +164,7 @@ const RegisterForm = () => {
               variant="outlined"
               type="password"
               fullWidth
-              sx={{ marginTop: '2rem' }}
+              sx={{ marginTop: '1rem' }}
               onChange={(e) => {
                 setPasswordError(passwordValidator(e.target.value));
                 setPassword(e.target.value);
@@ -179,12 +197,18 @@ const RegisterForm = () => {
             <Button
               variant="contained"
               fullWidth
-              sx={{ backgroundColor: '#6366F1', marginTop: '1.5rem' }}
+              sx={{ backgroundColor: '#6366F1', marginTop: '1rem' }}
               aria-label="Register"
               type="submit"
             >
               Register
             </Button>
+
+            {/*TODO: Add this without validation errors*/}
+            {/* <Divider>
+              <Typography>or</Typography>
+            </Divider>
+            <GoogleLoginButton /> */}
           </Box>
         </Box>
       </Paper>

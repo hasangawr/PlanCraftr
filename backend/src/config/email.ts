@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 
-export const formatMail = (link: string) => {
-  return `<a href=${link}>Click To Verify Email</a>`;
+export const formatMail = (link: string, displayText: string) => {
+  return `<a href=${link}>${displayText}</a>`;
 };
 
 const transporter = nodemailer.createTransport({
