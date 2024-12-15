@@ -1,6 +1,5 @@
 import { Box, CircularProgress } from '@mui/material';
 import { Navigate, Outlet } from 'react-router-dom';
-import Hero from '../components/Hero';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -49,8 +48,7 @@ const HomeLayout = () => {
   }
 
   return isUnauthenticated ? (
-    <Box sx={{ height: '100vh', display: 'flex' }}>
-      <Hero />
+    <Box>
       <Outlet />
     </Box>
   ) : (
