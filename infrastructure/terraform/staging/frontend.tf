@@ -135,6 +135,8 @@ resource "aws_cloudfront_distribution" "www_staging_distribution" {
     enabled = true
     default_root_object = "index.html"
     ##retain_on_delete = true
+
+    depends_on = [ aws_s3_bucket.www_staging_plancraftr_com ]
 }
 
 resource "aws_cloudfront_distribution" "staging_distribution" {
@@ -179,6 +181,8 @@ resource "aws_cloudfront_distribution" "staging_distribution" {
     enabled = true
     #default_root_object = "index.html"
     ##retain_on_delete = true
+
+    depends_on = [ aws_s3_bucket.staging_plancraftr_com ]
 }
 
 
