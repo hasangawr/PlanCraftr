@@ -179,6 +179,9 @@ resource "aws_cloudfront_distribution" "staging_distribution" {
     enabled = true
     #default_root_object = "index.html"
     ##retain_on_delete = true
+
+    depends_on = [aws_s3_bucket_website_configuration.static_website_config_s3_staging]
+
 }
 
 
