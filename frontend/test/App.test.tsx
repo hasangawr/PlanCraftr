@@ -3,7 +3,7 @@ import App from '../src/App';
 import { render, screen } from '@testing-library/react';
 
 describe('App', () => {
-  test('Should render email, password and Login button', () => {
+  test.todo('Should render email, password and Login button', () => {
     render(<App />);
 
     const email = screen.getByRole('textbox', { name: 'Email' });

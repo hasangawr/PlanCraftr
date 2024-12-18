@@ -1,10 +1,19 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, test } from 'vitest';
 import RegisterForm from '../../src/components/RegisterForm';
+import { BrowserRouter } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material';
+import mainTheme from '../../src/themes/MainTheme';
 
 describe('Register Form', () => {
   test('Should render name, email and password fields', () => {
-    render(<RegisterForm />);
+    render(
+      <ThemeProvider theme={mainTheme}>
+        <BrowserRouter>
+          <RegisterForm />
+        </BrowserRouter>
+      </ThemeProvider>,
+    );
 
     const name = screen.getByRole('textbox', { name: 'Name' });
     const email = screen.getByRole('textbox', { name: 'Email' });
@@ -16,7 +25,13 @@ describe('Register Form', () => {
   });
 
   test('Should render Register button', () => {
-    render(<RegisterForm />);
+    render(
+      <ThemeProvider theme={mainTheme}>
+        <BrowserRouter>
+          <RegisterForm />
+        </BrowserRouter>
+      </ThemeProvider>,
+    );
 
     const button = screen.getByRole('button', { name: 'Register' });
 
@@ -24,7 +39,13 @@ describe('Register Form', () => {
   });
 
   test('Should render a link to login', () => {
-    render(<RegisterForm />);
+    render(
+      <ThemeProvider theme={mainTheme}>
+        <BrowserRouter>
+          <RegisterForm />
+        </BrowserRouter>
+      </ThemeProvider>,
+    );
 
     const loginLink = screen.getByRole('link', { name: 'Log in' });
 
@@ -32,7 +53,13 @@ describe('Register Form', () => {
   });
 
   test('Should render a link to Terms and Conditions', () => {
-    render(<RegisterForm />);
+    render(
+      <ThemeProvider theme={mainTheme}>
+        <BrowserRouter>
+          <RegisterForm />
+        </BrowserRouter>
+      </ThemeProvider>,
+    );
 
     const termsLink = screen.getByRole('link', {
       name: 'Terms and Conditions',

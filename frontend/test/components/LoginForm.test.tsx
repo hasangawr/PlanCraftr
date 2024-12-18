@@ -5,7 +5,9 @@ import LoginForm from '../../src/components/LoginForm';
 import RegisterForm from '../../src/components/RegisterForm';
 import ForgotPassword from '../../src/components/ForgotPassword';
 import axios from 'axios';
-import { MemoryRouter } from 'react-router-dom';
+import { BrowserRouter, MemoryRouter } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material';
+import mainTheme from '../../src/themes/MainTheme';
 
 describe('LoginForm', () => {
   describe('navigation', () => {
@@ -14,13 +16,23 @@ describe('LoginForm', () => {
         .fn()
         .mockImplementation(HTMLAnchorElement.prototype.click);
       clickMock.mockImplementationOnce(
-        (link) => link && render(<RegisterForm />),
+        (link) =>
+          link &&
+          render(
+            <ThemeProvider theme={mainTheme}>
+              <BrowserRouter>
+                <RegisterForm />
+              </BrowserRouter>
+            </ThemeProvider>,
+          ),
       );
 
       render(
-        <MemoryRouter>
-          <LoginForm />
-        </MemoryRouter>,
+        <ThemeProvider theme={mainTheme}>
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>
+        </ThemeProvider>,
       );
 
       // Check if the LoginForm is initially rendered
@@ -44,13 +56,23 @@ describe('LoginForm', () => {
         .fn()
         .mockImplementation(HTMLAnchorElement.prototype.click);
       clickMock.mockImplementationOnce(
-        (link) => link && render(<ForgotPassword />),
+        (link) =>
+          link &&
+          render(
+            <ThemeProvider theme={mainTheme}>
+              <BrowserRouter>
+                <ForgotPassword />
+              </BrowserRouter>
+            </ThemeProvider>,
+          ),
       );
 
       render(
-        <MemoryRouter>
-          <LoginForm />
-        </MemoryRouter>,
+        <ThemeProvider theme={mainTheme}>
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>
+        </ThemeProvider>,
       );
 
       // Check if the LoginForm is initially rendered
@@ -64,7 +86,7 @@ describe('LoginForm', () => {
       // After clicking the link, the ForgotPassword form should be rendered
       expect(
         screen.getByRole('heading', {
-          name: 'Forgot password component',
+          name: 'Forgot password',
         }),
       ).toBeInTheDocument();
     });
@@ -76,9 +98,11 @@ describe('LoginForm', () => {
         const user = userEvent.setup();
 
         render(
-          <MemoryRouter>
-            <LoginForm />
-          </MemoryRouter>,
+          <ThemeProvider theme={mainTheme}>
+            <MemoryRouter>
+              <LoginForm />
+            </MemoryRouter>
+          </ThemeProvider>,
         );
 
         const continueBtn = screen.getByRole('button', { name: 'login' });
@@ -94,9 +118,11 @@ describe('LoginForm', () => {
         const user = userEvent.setup();
 
         render(
-          <MemoryRouter>
-            <LoginForm />
-          </MemoryRouter>,
+          <ThemeProvider theme={mainTheme}>
+            <MemoryRouter>
+              <LoginForm />
+            </MemoryRouter>
+          </ThemeProvider>,
         );
 
         const email = screen.getByRole('textbox', { name: 'Email' });
@@ -112,9 +138,11 @@ describe('LoginForm', () => {
         const user = userEvent.setup();
 
         render(
-          <MemoryRouter>
-            <LoginForm />
-          </MemoryRouter>,
+          <ThemeProvider theme={mainTheme}>
+            <MemoryRouter>
+              <LoginForm />
+            </MemoryRouter>
+          </ThemeProvider>,
         );
 
         const email = screen.getByRole('textbox', { name: 'Email' });
@@ -130,9 +158,11 @@ describe('LoginForm', () => {
         const user = userEvent.setup();
 
         render(
-          <MemoryRouter>
-            <LoginForm />
-          </MemoryRouter>,
+          <ThemeProvider theme={mainTheme}>
+            <MemoryRouter>
+              <LoginForm />
+            </MemoryRouter>
+          </ThemeProvider>,
         );
 
         const email = screen.getByRole('textbox', { name: 'Email' });
@@ -150,9 +180,11 @@ describe('LoginForm', () => {
         const user = userEvent.setup();
 
         render(
-          <MemoryRouter>
-            <LoginForm />
-          </MemoryRouter>,
+          <ThemeProvider theme={mainTheme}>
+            <MemoryRouter>
+              <LoginForm />
+            </MemoryRouter>
+          </ThemeProvider>,
         );
 
         const continueBtn = screen.getByRole('button', { name: 'login' });
@@ -168,9 +200,11 @@ describe('LoginForm', () => {
         const user = userEvent.setup();
 
         render(
-          <MemoryRouter>
-            <LoginForm />
-          </MemoryRouter>,
+          <ThemeProvider theme={mainTheme}>
+            <MemoryRouter>
+              <LoginForm />
+            </MemoryRouter>
+          </ThemeProvider>,
         );
 
         const password = screen.getByLabelText('Password');
@@ -188,9 +222,11 @@ describe('LoginForm', () => {
         const user = userEvent.setup();
 
         render(
-          <MemoryRouter>
-            <LoginForm />
-          </MemoryRouter>,
+          <ThemeProvider theme={mainTheme}>
+            <MemoryRouter>
+              <LoginForm />
+            </MemoryRouter>
+          </ThemeProvider>,
         );
 
         const password = screen.getByLabelText('Password');
@@ -212,9 +248,11 @@ describe('LoginForm', () => {
       const user = userEvent.setup();
 
       render(
-        <MemoryRouter>
-          <LoginForm />
-        </MemoryRouter>,
+        <ThemeProvider theme={mainTheme}>
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>
+        </ThemeProvider>,
       );
 
       const emailField = screen.getByRole('textbox', { name: 'Email' });
@@ -241,9 +279,11 @@ describe('LoginForm', () => {
       const user = userEvent.setup();
 
       render(
-        <MemoryRouter>
-          <LoginForm />
-        </MemoryRouter>,
+        <ThemeProvider theme={mainTheme}>
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>
+        </ThemeProvider>,
       );
 
       const emailField = screen.getByRole('textbox', { name: 'Email' });
@@ -281,9 +321,11 @@ describe('LoginForm', () => {
       const user = userEvent.setup();
 
       render(
-        <MemoryRouter>
-          <LoginForm />,
-        </MemoryRouter>,
+        <ThemeProvider theme={mainTheme}>
+          <MemoryRouter>
+            <LoginForm />
+          </MemoryRouter>
+        </ThemeProvider>,
       );
 
       const emailField = screen.getByRole('textbox', { name: 'Email' });
