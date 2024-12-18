@@ -234,7 +234,7 @@ jobs:
             sudo systemctl restart caddy
 
             # Display pm2 logs
-            pm2 logs
+            pm2 logs --nostream
 
           EOF
 
