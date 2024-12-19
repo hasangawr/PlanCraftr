@@ -180,7 +180,7 @@ resource "aws_cloudfront_distribution" "staging_distribution" {
     #default_root_object = "index.html"
     ##retain_on_delete = true
 
-    depends_on = [ aws_s3_bucket.staging_plancraftr_com, aws_s3_bucket_website_configuration.static_website_config_s3_staging]
+    depends_on = [ aws_s3_bucket_policy.allow_anyone_get_objects_s3_www_staging ]
 
 }
 
