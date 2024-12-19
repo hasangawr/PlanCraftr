@@ -180,6 +180,9 @@ jobs:
             sudo systemctl enable caddy
             sudo systemctl start caddy
             sudo systemctl restart caddy
+
+            # Display pm2 logs
+            pm2 logs --nostream
           EOF
 
   deploy_to_s3:
