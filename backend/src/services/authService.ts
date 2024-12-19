@@ -2,7 +2,11 @@ import User, { ISafeUser } from '../models/user';
 import argon2 from 'argon2';
 import { validateToken } from '../utils/jwt';
 import TempUser from '../models/tempUser';
-import { formatMail, sendMail } from '../config/email';
+import { sendMail } from '../config/email';
+import {
+  formatEmailVerifyMail,
+  formatPasswordResetEmail,
+} from '../config/emailTemplates';
 import { randomUUID } from 'crypto';
 
 export const registerUser = async (
@@ -26,12 +30,11 @@ export const registerUser = async (
     const user = await newUser.save();
 
     //send email
-    const mail = formatMail(
+    const mail = formatEmailVerifyMail(
       `${process.env.BASE_API_URL}/auth/verify-email?key=${user.key}`,
-      'Click To Verify Email',
     );
     await sendMail(
-      '"Admin Team - PlanCraftr" <admin-team@plancraftr.com>',
+      '"PlanCraftr" <noreply@plancraftr.com>',
       email,
       'Verify Email',
       mail,
@@ -107,13 +110,12 @@ export const sendPasswordResetLink = async (email: string) => {
     user.set('key', randomUUID());
     await user.save();
 
-    const mail = formatMail(
+    const mail = formatPasswordResetEmail(
       `${process.env.BASE_API_URL}/auth/forgot-password?key=${user.key}`,
-      'Click To Reset Password',
     );
 
     await sendMail(
-      '"Admin Team - PlanCraftr" <admin-team@plancraftr.com>',
+      '"PlanCraftr" <support-team@plancraftr.com>',
       user.email,
       'Reset Password',
       mail,
