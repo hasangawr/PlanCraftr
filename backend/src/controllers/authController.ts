@@ -89,12 +89,9 @@ export const verifyEmail = async (req: Request, res: Response) => {
 // };
 
 export const verify = async (req: Request, res: Response) => {
-  console.log(
-    `verify request - isAuthenticated - isUnauthenticated - user: ${req.isAuthenticated()} - ${req.isUnauthenticated()} - ${req.user}`,
-  );
   try {
     if (req.isUnauthenticated()) {
-      return res.status(401).json({ message: 'Unauthorized' });
+      return res.json({ message: 'Unauthorized' });
     }
     if (req.isAuthenticated()) {
       return res.status(200).json({ message: 'Authenticated' });

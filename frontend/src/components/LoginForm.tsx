@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import GoogleLoginButton from './GoogleLoginButton';
 import AlertSnackBar from './AlertSnackBar';
 import NotesRoundedIcon from '@mui/icons-material/NotesRounded';
+import { useAuth } from '../contexts/AuthProvider';
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>('');
@@ -24,8 +25,8 @@ const LoginForm = () => {
   const [alertOpen, setAlertOpen] = useState<boolean>(false);
 
   const theme = useTheme();
-
   const navigate = useNavigate();
+  const { checkAuthStatus } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,9 +49,14 @@ const LoginForm = () => {
           response.status === 200 &&
           response.data.message === 'Login Successful'
         ) {
+          localStorage.setItem(
+            'authEvent',
+            JSON.stringify({ type: 'login', timestamp: Date.now() }),
+          );
           setEmail('');
           setPassword('');
-          navigate('/dashboard');
+          checkAuthStatus();
+          //navigate('/dashboard');
         } else {
           setAlertOpen(true);
         }

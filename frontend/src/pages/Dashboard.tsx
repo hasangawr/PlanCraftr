@@ -1,20 +1,10 @@
 import { Box, Button, Typography } from '@mui/material';
-import axios from 'axios';
+import { useAuth } from '../contexts/AuthProvider';
 
 const Dashboard = () => {
-  const handleClick = async () => {
-    try {
-      const res = await axios.delete(
-        `${import.meta.env.VITE_API}/auth/logout`,
-        { withCredentials: true },
-      );
-      if (res.status === 200) {
-        window.location.href = '/';
-      }
-    } catch (error) {
-      console.error('Error during logout:', error);
-      alert('Failed to logout. Please try again.');
-    }
+  const { logout } = useAuth();
+  const handleClick = () => {
+    logout();
   };
 
   return (

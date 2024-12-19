@@ -1,38 +1,11 @@
 import { Box, CircularProgress } from '@mui/material';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useAuth } from '../contexts/AuthProvider';
 
 const HomeLayout = () => {
-  const [isUnauthenticated, setIsUnauthenticated] = useState<boolean | null>(
-    null,
-  );
+  const { isLoggedIn } = useAuth();
 
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_API}/auth/verify`,
-          {
-            withCredentials: true,
-          },
-        );
-
-        if (response.data.message === 'Unauthorized') {
-          setIsUnauthenticated(true);
-        } else {
-          setIsUnauthenticated(false);
-        }
-      } catch (error) {
-        console.log(error);
-        setIsUnauthenticated(true);
-      }
-    };
-
-    checkAuthStatus();
-  }, []);
-
-  if (isUnauthenticated === null) {
+  if (isLoggedIn === null) {
     return (
       <Box
         sx={{
@@ -47,7 +20,7 @@ const HomeLayout = () => {
     );
   }
 
-  return isUnauthenticated ? (
+  return !isLoggedIn ? (
     <Box>
       <Outlet />
     </Box>
