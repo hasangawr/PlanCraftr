@@ -1,11 +1,6 @@
 import axios from 'axios';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-
-interface AuthContextType {
-  isLoggedIn: boolean | null;
-  checkAuthStatus: () => Promise<void>;
-  logout: () => void;
-}
+import { AuthContextType } from '../types/types';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -13,6 +8,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  const [isVerified, setIsVerified] = useState<boolean | null>(null);
 
   const checkAuthStatus = async () => {
     try {
@@ -56,6 +52,32 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const checkUserVerified = async (user: string) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API}/auth/user-email-verified?user=${user}`,
+        { withCredentials: true },
+      );
+
+      if (response.status === 200 && response.data.message === 'Verified') {
+        localStorage.setItem(
+          'authEvent',
+          JSON.stringify({ type: 'verified', user, timestamp: Date.now() }),
+        );
+        setIsVerified(true);
+        return;
+      } else if (response.data.message === 'Unverified') {
+        setIsVerified(false);
+        return;
+      }
+
+      setIsVerified(false);
+    } catch (error) {
+      console.error('Error checking user verified: ', error);
+      setIsVerified(false);
+    }
+  };
+
   useEffect(() => {
     checkAuthStatus();
   });
@@ -71,6 +93,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         if (authEvent.type === 'login') {
           setIsLoggedIn(true);
         }
+        if (authEvent.type === 'verified') {
+          setIsVerified(true);
+        }
       }
     };
 
@@ -82,7 +107,15 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, checkAuthStatus, logout }}>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn,
+        checkAuthStatus,
+        logout,
+        checkUserVerified,
+        isVerified,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -6,10 +6,16 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { useAuth } from '../contexts/AuthProvider';
+import { Navigate } from 'react-router-dom';
 
 const VerifyEmail = () => {
   const theme = useTheme();
-  return (
+  const { isVerified } = useAuth();
+
+  return isVerified ? (
+    <Navigate to="/login" />
+  ) : (
     <Container maxWidth="lg" sx={{ paddingTop: '10rem' }}>
       <Paper
         elevation={3}

@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box,
   Button,
+  CircularProgress,
   Divider,
   Link,
   Paper,
@@ -11,7 +12,7 @@ import {
 } from '@mui/material';
 import { emailValidator, passwordValidator } from '../utils/validators';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import GoogleLoginButton from './GoogleLoginButton';
 import AlertSnackBar from './AlertSnackBar';
 import NotesRoundedIcon from '@mui/icons-material/NotesRounded';
@@ -22,11 +23,22 @@ const LoginForm = () => {
   const [password, setPassword] = useState<string>('');
   const [emailError, setEmailError] = useState<boolean | string>(false);
   const [passwordError, setPasswordError] = useState<boolean | string>(false);
-  const [alertOpen, setAlertOpen] = useState<boolean>(false);
+  const [alertOpen, setAlertOpen] = useState<boolean | null>(false);
+  const [emailAlertOpen, setEmailAlertOpen] = useState<boolean | null>(false);
 
   const theme = useTheme();
   const navigate = useNavigate();
-  const { checkAuthStatus } = useAuth();
+  const { checkAuthStatus, checkUserVerified, isVerified } = useAuth();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [urlSearchParams, setUrlSearchParams] = useSearchParams();
+  const user = urlSearchParams.get('user');
+
+  useEffect(() => {
+    if (user) {
+      checkUserVerified(user);
+      setEmailAlertOpen(isVerified);
+    }
+  }, [checkUserVerified, isVerified, user]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -83,9 +95,31 @@ const LoginForm = () => {
           setOpen={setAlertOpen}
           displayDuration={5000}
           severity="error"
-          message="Invalid credentials. Please check your username and password and try again."
+          message="Invalid credentials. Please check your username, password and try again."
+          position={{ vertical: 'bottom', horizontal: 'left' }}
         />
       }
+      {emailAlertOpen === null ? (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '1rem',
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <AlertSnackBar
+          displayDuration={5000}
+          severity="success"
+          open={emailAlertOpen}
+          message="Email successfully verified. Please login to continue."
+          setOpen={setEmailAlertOpen}
+          position={{ vertical: 'top', horizontal: 'center' }}
+        />
+      )}
       <Paper
         elevation={3}
         sx={{
