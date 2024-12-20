@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import {
+  _checkUserEmailVerified,
   checkForgotPasswordInitiated,
   getUserByEmail,
   getUserByKey,
@@ -45,14 +46,18 @@ export const verifyEmail = async (req: Request, res: Response) => {
             // .json({
             //   message: 'Email successfully verified. Please login to continue.',
             // })
-            .redirect(`${process.env.FRONTEND_URL}/login` as string)
+            .redirect(
+              `${process.env.FRONTEND_URL}/login?user=${userVerified}` as string,
+            )
         );
       }
 
-      return res
-        .status(401)
-        .json({ message: 'Verification link expired. Please register again.' });
-      //.redirect(`${process.env.FRONTEND_URL}/register`);
+      return (
+        res
+          .status(401)
+          // .json({ message: 'Verification link expired. Please register again.' });
+          .redirect(`${process.env.FRONTEND_URL}/register?user=link-expired`)
+      );
     }
   } catch (error) {
     console.error('Email verification failed: ', error);
@@ -226,5 +231,32 @@ export const resetPassword = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Password reset failed: ', error);
     return res.redirect(`${process.env.FRONTEND_URL}/forgot-password`);
+  }
+};
+
+// @desc check whether a user is verified
+// @route GET /auth/user-email-verified
+// @access public
+export const checkUserEmailVerified = async (req: Request, res: Response) => {
+  const userID = req.query.user;
+
+  if (userID) {
+    try {
+      const isUserVerified = await _checkUserEmailVerified(userID as string);
+
+      if (isUserVerified) {
+        return res.status(200).send({ message: 'Verified' });
+      }
+
+      return res.send({ message: 'Unverified' });
+    } catch (error) {
+      console.error(
+        `User verification check failed for user ${userID} with error : `,
+        error,
+      );
+      return res
+        .status(500)
+        .json({ message: 'User verification check failed' });
+    }
   }
 };

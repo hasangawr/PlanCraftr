@@ -61,7 +61,7 @@ export const verifyUserEmail = async (key: string) => {
 
     await tempUser.deleteOne();
 
-    return true;
+    return verifiedUser.id;
   }
 
   return false;
@@ -151,6 +151,16 @@ export const resetUserPassword = async (
 
     await user.save();
 
+    return true;
+  }
+
+  return false;
+};
+
+export const _checkUserEmailVerified = async (userID: string) => {
+  const user = await User.findById(userID);
+
+  if (user) {
     return true;
   }
 
