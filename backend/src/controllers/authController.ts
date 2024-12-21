@@ -41,14 +41,8 @@ export const verifyEmail = async (req: Request, res: Response) => {
       const userVerified = await verifyUserEmail(key as string);
 
       if (userVerified) {
-        return (
-          res
-            // .json({
-            //   message: 'Email successfully verified. Please login to continue.',
-            // })
-            .redirect(
-              `${process.env.FRONTEND_URL}/login?user=${userVerified}` as string,
-            )
+        return res.redirect(
+          `${process.env.FRONTEND_URL}/login?user=${userVerified}` as string,
         );
       }
 
@@ -145,9 +139,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
       }
     }
 
-    return res
-      .status(404)
-      .send({ message: 'User does not exist, check your email again' });
+    return res.send({ message: 'no user' });
   } catch (error) {
     console.error('Could not send password reset link: ', error);
     return res
@@ -196,17 +188,13 @@ export const forgotPasswordVerify = async (req: Request, res: Response) => {
         return res.redirect(`${process.env.FRONTEND_URL}/reset-password`);
       }
 
-      return res
-        .status(401)
-        .json({ message: 'Password reset link expired. Please try again.' });
-      //.redirect(`${process.env.FRONTEND_URL}/register`);
+      return res.redirect(
+        `${process.env.FRONTEND_URL}/login?reset-user=expired`,
+      );
     }
   } catch (error) {
     console.error('Password reset failed: ', error);
-    return res.status(500).json({
-      message: 'Password reset failed. Please try again in few minutes.',
-    });
-    //.redirect(`${process.env.FRONTEND_URL}/register`);
+    return res.redirect(`${process.env.FRONTEND_URL}/login?reset-user=expired`);
   }
 };
 
@@ -217,20 +205,27 @@ export const resetPassword = async (req: Request, res: Response) => {
 
   try {
     if (email && password && key) {
-      const passwordReset = await resetUserPassword(email, password, key);
+      const userID = await resetUserPassword(email, password, key);
 
-      if (passwordReset) {
+      if (userID) {
         console.log('Password reset successful: ', email);
         res.clearCookie('key', { path: '/' });
         res.clearCookie('email', { path: '/' });
-        return res.redirect(`${process.env.FRONTEND_URL}`); // display success message
+        return res.status(200).json({ userID, message: 'success' });
+        // res.redirect(
+        //   `${process.env.FRONTEND_URL}/login?reset-user=${userID}` as string,
+        // );
       }
     }
 
-    return res.redirect(`${process.env.FRONTEND_URL}/forgot-password`); // display error frontend
+    res.clearCookie('key', { path: '/' });
+    res.clearCookie('email', { path: '/' });
+    return res.json({ message: 'failed' });
   } catch (error) {
     console.error('Password reset failed: ', error);
-    return res.redirect(`${process.env.FRONTEND_URL}/forgot-password`);
+    res.clearCookie('key', { path: '/' });
+    res.clearCookie('email', { path: '/' });
+    return res.json({ message: 'failed' });
   }
 };
 

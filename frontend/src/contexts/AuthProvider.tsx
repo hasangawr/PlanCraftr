@@ -9,6 +9,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [isVerified, setIsVerified] = useState<boolean | null>(null);
+  const [isPasswordReset, setIsPasswordReset] = useState<boolean | null>(null);
 
   const checkAuthStatus = async () => {
     try {
@@ -78,6 +79,14 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const changePasswordResetState = (state: boolean) => {
+    setIsPasswordReset(state);
+  };
+
+  const changeUserVerifiedState = (state: boolean) => {
+    setIsVerified(state);
+  };
+
   useEffect(() => {
     checkAuthStatus();
   });
@@ -95,6 +104,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         }
         if (authEvent.type === 'verified') {
           setIsVerified(true);
+        }
+        if (authEvent.type === 'reset') {
+          setIsPasswordReset(true);
         }
       }
     };
@@ -114,6 +126,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         logout,
         checkUserVerified,
         isVerified,
+        isPasswordReset,
+        changePasswordResetState,
+        changeUserVerifiedState,
       }}
     >
       {children}

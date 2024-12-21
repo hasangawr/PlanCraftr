@@ -6,9 +6,18 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
+import { useAuth } from '../contexts/AuthProvider';
+import { Navigate } from 'react-router-dom';
 
 const ResetPasswordMessage = () => {
   const theme = useTheme();
+  const { isPasswordReset } = useAuth();
+
+  if (isPasswordReset === null) {
+    return <Navigate to="/" />;
+  } else if (isPasswordReset) {
+    return <Navigate to="/login" />;
+  }
   return (
     <Container maxWidth="lg" sx={{ paddingTop: '10rem' }}>
       <Paper

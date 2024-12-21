@@ -4,19 +4,26 @@ import {
   Button,
   CircularProgress,
   Divider,
+  FormControl,
+  FormHelperText,
+  IconButton,
+  InputAdornment,
+  InputLabel,
   Link,
+  OutlinedInput,
   Paper,
   TextField,
   Typography,
   useTheme,
 } from '@mui/material';
-import { emailValidator, passwordValidator } from '../utils/validators';
+import { emailValidator } from '../utils/validators';
 import axios from 'axios';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import GoogleLoginButton from './GoogleLoginButton';
 import AlertSnackBar from './AlertSnackBar';
 import NotesRoundedIcon from '@mui/icons-material/NotesRounded';
 import { useAuth } from '../contexts/AuthProvider';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const LoginForm = () => {
   const [email, setEmail] = useState<string>('');
@@ -25,6 +32,9 @@ const LoginForm = () => {
   const [passwordError, setPasswordError] = useState<boolean | string>(false);
   const [alertOpen, setAlertOpen] = useState<boolean | null>(false);
   const [emailAlertOpen, setEmailAlertOpen] = useState<boolean | null>(false);
+  const [resetAlertOpen, setResetAlertOpen] = useState<boolean | null>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [sendingRequest, setSendingRequest] = useState<boolean>(false);
 
   const theme = useTheme();
   const navigate = useNavigate();
@@ -32,6 +42,7 @@ const LoginForm = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [urlSearchParams, setUrlSearchParams] = useSearchParams();
   const user = urlSearchParams.get('user');
+  const resetUser = urlSearchParams.get('reset-user');
 
   useEffect(() => {
     if (user) {
@@ -39,6 +50,14 @@ const LoginForm = () => {
       setEmailAlertOpen(isVerified);
     }
   }, [checkUserVerified, isVerified, user]);
+
+  useEffect(() => {
+    if (resetUser) {
+      setResetAlertOpen(true);
+    }
+  }, [resetUser]);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,6 +70,8 @@ const LoginForm = () => {
 
     if (!emailError && !passwordError) {
       try {
+        setSendingRequest(true);
+
         const response = await axios.post(
           `${import.meta.env.VITE_API}/auth/login`,
           { email, password },
@@ -61,6 +82,7 @@ const LoginForm = () => {
           response.status === 200 &&
           response.data.message === 'Login Successful'
         ) {
+          setSendingRequest(false);
           localStorage.setItem(
             'authEvent',
             JSON.stringify({ type: 'login', timestamp: Date.now() }),
@@ -70,16 +92,29 @@ const LoginForm = () => {
           checkAuthStatus();
           //navigate('/dashboard');
         } else {
+          setSendingRequest(false);
           setAlertOpen(true);
         }
       } catch (error) {
+        setSendingRequest(false);
         setAlertOpen(true);
         console.log('login failed: ', error);
       }
     }
   };
 
-  return (
+  return sendingRequest ? (
+    <Box
+      sx={{
+        display: 'flex',
+        height: '100vh',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <CircularProgress />
+    </Box>
+  ) : (
     <Box
       sx={{
         height: '100vh',
@@ -120,6 +155,26 @@ const LoginForm = () => {
           position={{ vertical: 'top', horizontal: 'center' }}
         />
       )}
+      {
+        <AlertSnackBar
+          open={resetAlertOpen}
+          setOpen={setResetAlertOpen}
+          displayDuration={5000}
+          severity={
+            resetUser === 'failed' || resetUser === 'expired'
+              ? 'error'
+              : 'success'
+          }
+          message={
+            resetUser === 'failed'
+              ? 'Password reset failed. Please try again.'
+              : resetUser === 'expired'
+                ? 'Password reset failed. Link expired.'
+                : 'Password reset successful. Please login to continue.'
+          }
+          position={{ vertical: 'top', horizontal: 'center' }}
+        />
+      }
       <Paper
         elevation={3}
         sx={{
@@ -174,7 +229,7 @@ const LoginForm = () => {
               error={emailError ? true : false}
               helperText={emailError}
             />
-            <TextField
+            {/* <TextField
               id="password"
               label="Password"
               variant="outlined"
@@ -182,12 +237,55 @@ const LoginForm = () => {
               fullWidth
               sx={{ marginTop: '1rem' }}
               onChange={(e) => {
-                setPasswordError(passwordValidator(e.target.value));
+                //setPasswordError(passwordValidator(e.target.value));
                 setPassword(e.target.value);
               }}
               error={passwordError ? true : false}
               helperText={passwordError}
-            />
+            /> */}
+
+            <FormControl fullWidth>
+              {/* password */}
+              <InputLabel
+                htmlFor="outlined-adornment-password"
+                variant="outlined"
+                sx={{ marginTop: '1rem' }}
+                error={passwordError ? true : false}
+              >
+                Password
+              </InputLabel>
+              <OutlinedInput
+                id="outlined-adornment-password"
+                type={showPassword ? 'text' : 'password'}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label={
+                        showPassword
+                          ? 'hide the password'
+                          : 'display the password'
+                      }
+                      onClick={handleClickShowPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Password"
+                sx={{ marginTop: '1rem' }}
+                fullWidth
+                onChange={(e) => {
+                  //setPasswordError(passwordValidator(e.target.value));
+                  setPassword(e.target.value);
+                }}
+                error={passwordError ? true : false}
+              />
+              {passwordError && (
+                <FormHelperText error={true}>{passwordError}</FormHelperText>
+              )}
+            </FormControl>
+
             <Button
               variant="contained"
               fullWidth

@@ -9,4 +9,7 @@ export interface AuthContextType {
   logout: () => void;
   checkUserVerified: (user: string) => void;
   isVerified: boolean | null;
+  isPasswordReset: boolean | null;
+  changePasswordResetState: (state: boolean) => void;
+  changeUserVerifiedState: (state: boolean) => void;
 }

@@ -17,8 +17,8 @@ import {
   useTheme,
 } from '@mui/material';
 import axios from 'axios';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
   emailValidator,
   nameValidator,
@@ -28,6 +28,7 @@ import AlertSnackBar from './AlertSnackBar';
 import NotesRoundedIcon from '@mui/icons-material/NotesRounded';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import GoogleLoginButton from './GoogleLoginButton';
+import { useAuth } from '../contexts/AuthProvider';
 
 const RegisterForm = () => {
   const [name, setName] = useState<string>('');
@@ -49,14 +50,25 @@ const RegisterForm = () => {
   const [passwordMismatchError, setPasswordMismatchError] =
     useState<boolean>(false);
   const [sendingRequest, setSendingRequest] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [urlSearchParams, setUrlSearchParams] = useSearchParams();
+  const user = urlSearchParams.get('user');
 
   const navigate = useNavigate();
 
   const theme = useTheme();
+  const { changeUserVerifiedState } = useAuth();
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleClickShowConfirmPassword = () =>
     setShowConfirmPassword((show) => !show);
+
+  useEffect(() => {
+    if (user === 'link-expired') {
+      setAlertMessage('Verification link expired. Please register again.');
+      setAlertOpen(true);
+    }
+  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -88,6 +100,7 @@ const RegisterForm = () => {
           );
 
           if (response.status === 201 && response.data.email) {
+            changeUserVerifiedState(false);
             setSendingRequest(false);
             setName('');
             setEmail('');
@@ -135,7 +148,10 @@ const RegisterForm = () => {
         displayDuration={5000}
         severity="error"
         message={alertMessage}
-        position={{ vertical: 'bottom', horizontal: 'left' }}
+        position={{
+          vertical: user === 'link-expired' ? 'top' : 'bottom',
+          horizontal: user === 'link-expired' ? 'center' : 'left',
+        }}
       />
       <Paper
         elevation={3}

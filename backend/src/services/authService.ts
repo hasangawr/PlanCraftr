@@ -115,7 +115,7 @@ export const sendPasswordResetLink = async (email: string) => {
     );
 
     await sendMail(
-      '"PlanCraftr" <support-team@plancraftr.com>',
+      '"PlanCraftr" <noreply@plancraftr.com>',
       user.email,
       'Reset Password',
       mail,
@@ -147,11 +147,11 @@ export const resetUserPassword = async (
   if (user && user.key && user.key === key) {
     const hash = await argon2.hash(password);
     user.password = hash;
-    delete user.key;
+    user.key = '';
 
     await user.save();
 
-    return true;
+    return user.id;
   }
 
   return false;

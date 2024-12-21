@@ -13,9 +13,12 @@ const VerifyEmail = () => {
   const theme = useTheme();
   const { isVerified } = useAuth();
 
-  return isVerified ? (
-    <Navigate to="/login" />
-  ) : (
+  if (isVerified === null) {
+    return <Navigate to="/" />;
+  } else if (isVerified) {
+    return <Navigate to="/login" />;
+  }
+  return (
     <Container maxWidth="lg" sx={{ paddingTop: '10rem' }}>
       <Paper
         elevation={3}
