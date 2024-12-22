@@ -19,6 +19,10 @@ export const passwordValidator = (password: string): string | boolean => {
   return false;
 };
 
+export const nonEmptyValidator = (value: string): string | boolean => {
+  return value.length === 0 ? 'Password is required' : '';
+};
+
 export const nameValidator = (name: string): string | boolean => {
   const minLength = 2;
   const trimmedName = name.trim();

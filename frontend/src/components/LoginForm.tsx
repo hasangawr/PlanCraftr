@@ -16,7 +16,7 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { emailValidator } from '../utils/validators';
+import { emailValidator, nonEmptyValidator } from '../utils/validators';
 import axios from 'axios';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import GoogleLoginButton from './GoogleLoginButton';
@@ -277,6 +277,7 @@ const LoginForm = () => {
                 fullWidth
                 onChange={(e) => {
                   //setPasswordError(passwordValidator(e.target.value));
+                  setPasswordError(nonEmptyValidator(e.target.value));
                   setPassword(e.target.value);
                 }}
                 error={passwordError ? true : false}
