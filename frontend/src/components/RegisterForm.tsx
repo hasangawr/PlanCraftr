@@ -50,8 +50,7 @@ const RegisterForm = () => {
   const [passwordMismatchError, setPasswordMismatchError] =
     useState<boolean>(false);
   const [sendingRequest, setSendingRequest] = useState<boolean>(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [urlSearchParams, setUrlSearchParams] = useSearchParams();
+  const [urlSearchParams] = useSearchParams();
   const user = urlSearchParams.get('user');
 
   const navigate = useNavigate();
