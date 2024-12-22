@@ -5,8 +5,8 @@
   "scripts": {
     "build": "tsc",
     "compile:watch": "tsc --watch",
-    "start": "node dist/index.js",
-    "watch": "nodemon dist/index.js --watch",
+    "start": "node dist/src/index.js",
+    "watch": "nodemon dist/src/index.js --watch",
     "test": "jest",
     "test:watch": "jest --watch",
     "watch-compile-and-start": "tsc --watch && nodemon dist/index.js --watch"
@@ -17,6 +17,7 @@
   "description": "",
   "devDependencies": {
     "@eslint/js": "^9.11.1",
+    "@types/argon2": "^0.14.1",
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
@@ -38,7 +39,7 @@
     "prettier": "3.3.3",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.4",
+    "typescript": "^5.7.2",
     "typescript-eslint": "^8.7.0"
   },
   "dependencies": {

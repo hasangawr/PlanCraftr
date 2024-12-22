@@ -11,6 +11,7 @@ export interface IUser {
   lastName: string;
   image: string;
   key?: string;
+  keyCreatedAt?: Date;
   createdAt: Date;
 }
 
@@ -62,7 +63,10 @@ const userSchema = new Schema<IUser>({
   },
   key: {
     type: String,
-    default: 'none',
+    default: '',
+  },
+  keyCreatedAt: {
+    type: Date,
   },
   createdAt: {
     type: Date,
