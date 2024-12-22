@@ -4,14 +4,17 @@ import RegisterForm from '../../src/components/RegisterForm';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material';
 import mainTheme from '../../src/themes/MainTheme';
+import AuthProvider from '../../src/contexts/AuthProvider';
 
 describe('Register Form', () => {
   test('Should render name, email and password fields', () => {
     render(
       <ThemeProvider theme={mainTheme}>
-        <BrowserRouter>
-          <RegisterForm />
-        </BrowserRouter>
+        <AuthProvider>
+          <BrowserRouter>
+            <RegisterForm />
+          </BrowserRouter>
+        </AuthProvider>
       </ThemeProvider>,
     );
 
@@ -27,9 +30,11 @@ describe('Register Form', () => {
   test('Should render Register button', () => {
     render(
       <ThemeProvider theme={mainTheme}>
-        <BrowserRouter>
-          <RegisterForm />
-        </BrowserRouter>
+        <AuthProvider>
+          <BrowserRouter>
+            <RegisterForm />
+          </BrowserRouter>
+        </AuthProvider>
       </ThemeProvider>,
     );
 
@@ -41,9 +46,11 @@ describe('Register Form', () => {
   test('Should render a link to login', () => {
     render(
       <ThemeProvider theme={mainTheme}>
-        <BrowserRouter>
-          <RegisterForm />
-        </BrowserRouter>
+        <AuthProvider>
+          <BrowserRouter>
+            <RegisterForm />
+          </BrowserRouter>
+        </AuthProvider>
       </ThemeProvider>,
     );
 
@@ -55,9 +62,11 @@ describe('Register Form', () => {
   test('Should render a link to Terms and Conditions', () => {
     render(
       <ThemeProvider theme={mainTheme}>
-        <BrowserRouter>
-          <RegisterForm />
-        </BrowserRouter>
+        <AuthProvider>
+          <BrowserRouter>
+            <RegisterForm />
+          </BrowserRouter>
+        </AuthProvider>
       </ThemeProvider>,
     );
 
