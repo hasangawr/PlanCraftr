@@ -16,7 +16,11 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import { emailValidator, nonEmptyValidator } from '../utils/validators';
+import {
+  emailValidator,
+  nonEmptyValidator,
+  passwordValidator,
+} from '../utils/validators';
 import axios from 'axios';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import GoogleLoginButton from './GoogleLoginButton';
@@ -30,6 +34,9 @@ const LoginForm = () => {
   const [password, setPassword] = useState<string>('');
   const [emailError, setEmailError] = useState<boolean | string>(false);
   const [passwordError, setPasswordError] = useState<boolean | string>(false);
+  const [nonDisplayPasswordError, setNonDisplayPasswordError] = useState<
+    boolean | string
+  >(false);
   const [alertOpen, setAlertOpen] = useState<boolean | null>(false);
   const [emailAlertOpen, setEmailAlertOpen] = useState<boolean | null>(false);
   const [resetAlertOpen, setResetAlertOpen] = useState<boolean | null>(false);
@@ -68,7 +75,11 @@ const LoginForm = () => {
       return;
     }
 
-    if (!emailError && !passwordError) {
+    if (nonDisplayPasswordError) {
+      setAlertOpen(true);
+    }
+
+    if (!emailError && !passwordError && !nonDisplayPasswordError) {
       try {
         setSendingRequest(true);
 
@@ -276,7 +287,7 @@ const LoginForm = () => {
                 sx={{ marginTop: '1rem' }}
                 fullWidth
                 onChange={(e) => {
-                  //setPasswordError(passwordValidator(e.target.value));
+                  setNonDisplayPasswordError(passwordValidator(e.target.value));
                   setPasswordError(nonEmptyValidator(e.target.value));
                   setPassword(e.target.value);
                 }}
