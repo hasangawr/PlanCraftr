@@ -68,6 +68,15 @@ const ResetPassword = () => {
           );
           return;
         }
+        if (response.data.message === 'expired') {
+          setSendingRequest(false);
+          navigate(`/login?reset-user=expired`);
+          localStorage.setItem(
+            'authEvent',
+            JSON.stringify({ type: 'reset', timestamp: Date.now() }),
+          );
+          return;
+        }
 
         setSendingRequest(false);
         navigate(`/login?reset-user=failed`);

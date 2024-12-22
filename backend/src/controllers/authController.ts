@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import {
   _checkUserEmailVerified,
-  checkForgotPasswordInitiated,
   getUserByEmail,
   getUserByKey,
   registerUser,
@@ -48,7 +47,6 @@ export const verifyEmail = async (req: Request, res: Response) => {
 
       return (
         res
-          .status(401)
           // .json({ message: 'Verification link expired. Please register again.' });
           .redirect(`${process.env.FRONTEND_URL}/register?user=link-expired`)
       );
@@ -148,24 +146,24 @@ export const forgotPassword = async (req: Request, res: Response) => {
   }
 };
 
-export const forgotPasswordInitiated = async (req: Request, res: Response) => {
-  try {
-    const mail = req.query.mail;
+// export const forgotPasswordInitiated = async (req: Request, res: Response) => {
+//   try {
+//     const mail = req.query.mail;
 
-    if (mail) {
-      const initiated = await checkForgotPasswordInitiated(mail as string);
+//     if (mail) {
+//       const initiated = await checkForgotPasswordInitiated(mail as string);
 
-      if (initiated) {
-        return res.status(200).send({ message: 'Initiated' });
-      }
-    }
+//       if (initiated) {
+//         return res.status(200).send({ message: 'Initiated' });
+//       }
+//     }
 
-    return res.status(400).send({ message: 'Not Initiated' });
-  } catch (error) {
-    console.error('Error checking forgot password initiation: ', error);
-    return res.status(500).send({ message: 'Not Initiated' });
-  }
-};
+//     return res.status(400).send({ message: 'Not Initiated' });
+//   } catch (error) {
+//     console.error('Error checking forgot password initiation: ', error);
+//     return res.status(500).send({ message: 'Not Initiated' });
+//   }
+// };
 
 export const forgotPasswordVerify = async (req: Request, res: Response) => {
   // TODO: check whether the key is a valid UUID
@@ -205,16 +203,21 @@ export const resetPassword = async (req: Request, res: Response) => {
 
   try {
     if (email && password && key) {
-      const userID = await resetUserPassword(email, password, key);
+      const resetStatus = await resetUserPassword(email, password, key);
 
-      if (userID) {
+      if (resetStatus === 'success') {
         console.log('Password reset successful: ', email);
         res.clearCookie('key', { path: '/' });
         res.clearCookie('email', { path: '/' });
-        return res.status(200).json({ userID, message: 'success' });
+        return res.status(200).json({ message: 'success' });
         // res.redirect(
         //   `${process.env.FRONTEND_URL}/login?reset-user=${userID}` as string,
         // );
+      }
+      if (resetStatus === 'expired') {
+        res.clearCookie('key', { path: '/' });
+        res.clearCookie('email', { path: '/' });
+        return res.json({ message: 'expired' });
       }
     }
 

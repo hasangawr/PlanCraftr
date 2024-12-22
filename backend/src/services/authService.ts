@@ -8,6 +8,7 @@ import {
   formatPasswordResetEmail,
 } from '../config/emailTemplates';
 import { randomUUID } from 'crypto';
+import { minutesElapsedTillNowFrom } from '../utils/date';
 
 export const registerUser = async (
   name: string,
@@ -108,6 +109,7 @@ export const sendPasswordResetLink = async (email: string) => {
 
   if (user) {
     user.set('key', randomUUID());
+    user.set('keyCreatedAt', Date.now());
     await user.save();
 
     const mail = formatPasswordResetEmail(
@@ -127,34 +129,56 @@ export const sendPasswordResetLink = async (email: string) => {
   return false;
 };
 
-export const checkForgotPasswordInitiated = async (email: string) => {
-  const user = await User.findOne({ email });
+// export const checkForgotPasswordInitiated = async (email: string) => {
+//   const user = await User.findOne({ email });
+//   const linkExpTime = Number(
+//     process.env.PASSWORD_RESET_LINK_EXPIRATION_TIME_IN_MINUTES as string,
+//   );
 
-  if (user && user.key) {
-    return true;
-  }
+//   if (
+//     user &&
+//     user.key &&
+//     user.keyCreatedAt &&
+//     minutesElapsedTillNowFrom(user.keyCreatedAt) < linkExpTime
+//   ) {
+//     return true;
+//   }
 
-  return false;
-};
+//   return false;
+// };
 
 export const resetUserPassword = async (
   email: string,
   password: string,
   key: string,
-) => {
+): Promise<string> => {
   const user = await User.findOne({ email });
 
-  if (user && user.key && user.key === key) {
-    const hash = await argon2.hash(password);
-    user.password = hash;
-    user.key = '';
+  const linkExpTime = Number(
+    process.env.PASSWORD_RESET_LINK_EXPIRATION_TIME_IN_MINUTES as string,
+  );
 
+  if (user && user.key && user.key === key) {
+    if (
+      user.keyCreatedAt &&
+      minutesElapsedTillNowFrom(user.keyCreatedAt) < linkExpTime
+    ) {
+      const hash = await argon2.hash(password);
+      user.password = hash;
+      user.key = '';
+
+      await user.save();
+
+      return 'success';
+    }
+
+    user.key = '';
     await user.save();
 
-    return user.id;
+    return 'expired';
   }
 
-  return false;
+  return 'failed';
 };
 
 export const _checkUserEmailVerified = async (userID: string) => {

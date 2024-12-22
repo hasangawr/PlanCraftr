@@ -9,6 +9,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [isVerified, setIsVerified] = useState<boolean | null>(null);
+
+  // here null means forgotPassword flow is not yet initiated - so the user cannot see the password reset message
+  // false means forgotPassword flow has now initiated - so the user can see the password reset message
+  // true means forgotPassword flow has now completed - so the user cannot see the password reset message
   const [isPasswordReset, setIsPasswordReset] = useState<boolean | null>(null);
 
   const checkAuthStatus = async () => {
