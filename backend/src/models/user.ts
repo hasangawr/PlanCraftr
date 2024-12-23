@@ -51,9 +51,6 @@ const userSchema = new Schema<IUser>({
   },
   lastName: {
     type: String,
-    required: function () {
-      return this.authType === 'google';
-    },
   },
   image: {
     type: String,
