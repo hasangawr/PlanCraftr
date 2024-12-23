@@ -34,6 +34,7 @@ const RegisterForm = () => {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -73,10 +74,12 @@ const RegisterForm = () => {
     e.preventDefault();
 
     if (document.activeElement?.ariaLabel === 'Register') {
-      if (!name || !email || !password || !termsChecked) {
+      if (!name || !email || !password || !termsChecked || !confirmPassword) {
         if (!name) setNameError('Name is required');
         if (!email) setEmailError('Email is required');
         if (!password) setPasswordError('Password is required');
+        if (!confirmPassword)
+          setConfirmPasswordError('Password confirmation is required');
         if (!termsChecked)
           setTermsError('You need to accept Terms & Conditions');
         return;
@@ -295,6 +298,7 @@ const RegisterForm = () => {
                 sx={{ marginTop: '1rem' }}
                 fullWidth
                 onChange={(e) => {
+                  setConfirmPassword(e.target.value);
                   setConfirmPasswordError(passwordValidator(e.target.value));
                   if (e.target.value !== password) {
                     setPasswordMismatchError(true);
