@@ -8,7 +8,7 @@ export interface IUser {
   password: string;
   googleId: string;
   firstName: string;
-  lastName: string;
+  lastName?: string;
   image: string;
   key?: string;
   keyCreatedAt?: Date;
