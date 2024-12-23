@@ -46,8 +46,7 @@ const LoginForm = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { checkAuthStatus, checkUserVerified, isVerified } = useAuth();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [urlSearchParams, setUrlSearchParams] = useSearchParams();
+  const [urlSearchParams] = useSearchParams();
   const user = urlSearchParams.get('user');
   const resetUser = urlSearchParams.get('reset-user');
 
