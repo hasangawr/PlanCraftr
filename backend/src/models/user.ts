@@ -8,9 +8,10 @@ export interface IUser {
   password: string;
   googleId: string;
   firstName: string;
-  lastName: string;
+  lastName?: string;
   image: string;
   key?: string;
+  keyCreatedAt?: Date;
   createdAt: Date;
 }
 
@@ -50,9 +51,6 @@ const userSchema = new Schema<IUser>({
   },
   lastName: {
     type: String,
-    required: function () {
-      return this.authType === 'google';
-    },
   },
   image: {
     type: String,
@@ -62,7 +60,10 @@ const userSchema = new Schema<IUser>({
   },
   key: {
     type: String,
-    default: 'none',
+    default: '',
+  },
+  keyCreatedAt: {
+    type: Date,
   },
   createdAt: {
     type: Date,

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {
+  checkUserEmailVerified,
   forgotPassword,
-  forgotPasswordInitiated,
   forgotPasswordVerify,
   //authenticate,
   logout,
@@ -35,8 +35,9 @@ router.delete('/logout', logout);
 router.get('/verify', verify);
 router.get('/forgot-password', forgotPasswordVerify);
 router.post('/forgot-password', forgotPassword);
-router.get('/forgot-password-initiated', forgotPasswordInitiated);
+//router.get('/forgot-password-initiated', forgotPasswordInitiated);
 router.put('/reset-password', resetPassword);
+router.get('/user-email-verified', checkUserEmailVerified);
 
 // Google auth routes
 router.get(

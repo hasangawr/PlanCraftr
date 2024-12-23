@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Link,
   Paper,
   TextField,
@@ -10,10 +11,12 @@ import {
 import { ArrowBack } from '@mui/icons-material';
 import NotesRoundedIcon from '@mui/icons-material/NotesRounded';
 import axios from 'axios';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { emailValidator } from '../utils/validators';
 import { EmailContext } from '../contexts/EmailProvider';
+import AlertSnackBar from './AlertSnackBar';
+import { useAuth } from '../contexts/AuthProvider';
 
 const ForgotPassword = () => {
   const emailContext = useContext(EmailContext);
@@ -21,11 +24,16 @@ const ForgotPassword = () => {
 
   const [email, setEmail] = useState<string>('');
   const [emailError, setEmailError] = useState<boolean | string>(false);
+  const [sendingRequest, setSendingRequest] = useState<boolean>(false);
+  const [alertOpen, setAlertOpen] = useState<boolean | null>(false);
+  const [alertMessage, setAlertMessage] = useState<string>('');
 
   const navigate = useNavigate();
+  const { changePasswordResetState } = useAuth();
 
-  // display error frontend
-  //useEffect(() => {}, []);
+  useEffect(() => {
+    changePasswordResetState(false);
+  }, [changePasswordResetState]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,27 +47,47 @@ const ForgotPassword = () => {
       emailContext?.setForgotPasswordEmail(email);
 
       try {
+        setSendingRequest(true);
         const response = await axios.post(
           `${import.meta.env.VITE_API}/auth/forgot-password`,
           { email },
           { withCredentials: true },
         );
 
-        console.log('Forgot password response: ', response);
-
         if (
           response.status === 200 &&
           response.data.message === 'Password reset link sent'
         ) {
+          setSendingRequest(false);
           navigate('/reset-password-message');
+          return;
+        }
+
+        if (response.data.message === 'no user') {
+          setSendingRequest(false);
+          setAlertMessage('User does not exist. Please check email');
+          setAlertOpen(true);
         }
       } catch (error) {
+        setSendingRequest(false);
+        setAlertOpen(true);
         console.log('Password reset request failed: ', error);
       }
     }
   };
 
-  return (
+  return sendingRequest ? (
+    <Box
+      sx={{
+        display: 'flex',
+        height: '100vh',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <CircularProgress />
+    </Box>
+  ) : (
     <Box
       sx={{
         height: '100vh',
@@ -69,6 +97,19 @@ const ForgotPassword = () => {
         alignItems: 'center',
       }}
     >
+      {
+        <AlertSnackBar
+          open={alertOpen}
+          setOpen={setAlertOpen}
+          displayDuration={5000}
+          severity="error"
+          message={
+            alertMessage ||
+            'Reset link could not be sent. Please try again shortly.'
+          }
+          position={{ vertical: 'bottom', horizontal: 'left' }}
+        />
+      }
       <Paper
         elevation={3}
         sx={{

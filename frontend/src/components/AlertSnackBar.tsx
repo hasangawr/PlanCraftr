@@ -3,11 +3,15 @@ import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
 interface AlertSnackBarProps {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  open: boolean | null;
+  setOpen: React.Dispatch<React.SetStateAction<boolean | null>>;
   displayDuration: number;
   severity: 'success' | 'info' | 'warning' | 'error';
   message: string;
+  position: {
+    vertical: 'bottom' | 'top';
+    horizontal: 'center' | 'left' | 'right';
+  };
 }
 
 const AlertSnackBar: React.FC<AlertSnackBarProps> = (props) => {
@@ -26,9 +30,10 @@ const AlertSnackBar: React.FC<AlertSnackBarProps> = (props) => {
   return (
     <div>
       <Snackbar
-        open={props.open}
+        open={props.open as boolean}
         autoHideDuration={props.displayDuration}
         onClose={handleClose}
+        anchorOrigin={props.position}
       >
         <Alert
           onClose={handleClose}
