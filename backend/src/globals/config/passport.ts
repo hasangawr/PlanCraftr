@@ -1,22 +1,24 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as LocalStrategy } from 'passport-local';
-import User, { IUser } from '../models/user';
-import { authenticateUser } from '../services/authService';
+import { makeUserModel } from '../../api/v1/data-access';
+import { authenticateUser } from '../../api/v1/use-cases';
+import { IUserDto } from '../../api/v1/data-access/interfaces/IUserDto';
 
 const passportConfig = (_passport: passport.PassportStatic) => {
+  const User = makeUserModel();
   _passport.use(
     new GoogleStrategy(
       {
         clientID: process.env.GOOGLE_CLIENT_ID as string,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-        callbackURL: '/auth/google/callback',
+        callbackURL: 'api/v1/auth/google/callback',
       },
       async (accessToken, refreshToken, profile, done) => {
         const _email = profile.emails?.at(0)?.value;
         const newUser = {
           authType: 'google',
-          email: _email,
+          email: _email as string,
           googleId: profile.id,
           name: profile.displayName,
           firstName: profile.name?.givenName,
@@ -25,12 +27,12 @@ const passportConfig = (_passport: passport.PassportStatic) => {
         };
 
         try {
-          let user = await User.findOne({ email: _email });
+          let user = await User.findByEmail(_email as string);
 
           if (user) {
             done(null, user);
           } else {
-            user = await User.create(newUser);
+            user = await User.createNewOAuth(newUser);
             done(null, user);
           }
         } catch (error) {
@@ -64,12 +66,12 @@ const passportConfig = (_passport: passport.PassportStatic) => {
   );
 
   passport.serializeUser((user, done) => {
-    done(null, (user as IUser)._id);
+    done(null, (user as IUserDto).id);
   });
 
   passport.deserializeUser(async (id, done) => {
     try {
-      const user = await User.findById(id);
+      const user = await User.findByUserId(id as string);
       done(null, user);
     } catch (error) {
       done(error, null);

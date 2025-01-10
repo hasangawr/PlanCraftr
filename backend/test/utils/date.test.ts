@@ -1,5 +1,6 @@
-import { minutesElapsedTillNowFrom } from '../../src/utils/date';
+import { minutesElapsedTillNowFrom } from '../../src/globals/utils/date';
 
+//test
 describe('Dates', () => {
   describe('Get minutes from a given time till now', () => {
     it('Should return 0 if current time is passed', () => {

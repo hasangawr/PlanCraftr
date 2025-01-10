@@ -6,7 +6,9 @@ const connectDB = async () => {
     // 4. Connect to MongoDB
     await connect(process.env.MONGODB_URI as string);
 
-    console.log('Successfully connected to the database!');
+    console.log(
+      `Successfully connected to the ${process.env.NODE_ENV} database!`,
+    );
 
     // const user = new User({
     //   name: 'Bill',
@@ -20,6 +22,15 @@ const connectDB = async () => {
     // console.log(user.email); // 'bill@initech.com'
   } catch (error) {
     console.log("Couldn't connect to the database: ", error);
+  }
+};
+
+export const connectTestDB = async () => {
+  try {
+    await connect(process.env['MONGO_URI'] as string);
+    console.log('Successfully connected to the test database!');
+  } catch (error) {
+    console.log("Couldn't connect to the test database: ", error);
   }
 };
 
