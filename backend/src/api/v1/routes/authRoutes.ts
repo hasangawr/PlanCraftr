@@ -71,7 +71,7 @@ router.get('/verify', userAuthStatusVerifyHandler);
 // router.post('/forgot-password', forgotPassword);
 // //router.get('/forgot-password-initiated', forgotPasswordInitiated);
 // router.put('/reset-password', resetPassword);
-// router.get('/user-email-verified', checkUserEmailVerified);
+//router.get('/user-email-verified', checkUserEmailVerified);
 
 // Google auth routes
 router.get(
