@@ -96,23 +96,52 @@ describe('User model', () => {
     });
 
     describe('updateCurrent', () => {
-      it('Should update a user in the db', async () => {
+      it('Should update a user in the db - 1', async () => {
         const user2 = createFakeUserWithoutID();
-        const currentUser = await User.updateCurrent({
+        const updatedUser = await User.updateCurrent({
           id: user1.id,
-          publicId: user1.publicId,
           ...user2,
         });
-        const updatedUser = await User.findById(user1.id).exec();
-
-        expect(currentUser?.id).toBe(user1.id);
-        expect(currentUser?.email).toBe(user1.email);
-        expect(currentUser?.name).toBe(user1.name);
-        expect(currentUser?.password).toBe(user1.password);
 
         expect(updatedUser?.id).toBe(user1.id);
         expect(updatedUser?.name).toBe(user2.name);
         expect(updatedUser?.password).toBe(user2.password);
+
+        await User.findByIdAndDelete(updatedUser?.id).exec();
+      });
+
+      it('Should update a user in the db - 2', async () => {
+        const user2 = createFakeUserWithoutID();
+        const updatedUser = await User.updateCurrent({
+          id: user1.id,
+          name: user2.name,
+        });
+
+        expect(updatedUser?.id).toBe(user1.id);
+        expect(updatedUser?.name).toBe(user2.name);
+        expect(updatedUser?.password).toBe(user1.password);
+
+        await User.findByIdAndDelete(updatedUser?.id).exec();
+      });
+
+      it('Should update the keyCreatedTime if the key is updated', async () => {
+        const user2 = createFakeUserWithoutID();
+        const user3 = createFakeUserWithoutID();
+        const updatedUser = await User.updateCurrent({
+          id: user1.id,
+          key: user2.key,
+        });
+        const updatedUser2 = await User.updateCurrent({
+          id: user1.id,
+          key: user3.key,
+        });
+
+        expect(updatedUser?.id).toBe(user1.id);
+        expect(updatedUser?.name).toBe(user1.name);
+        expect(updatedUser?.password).toBe(user1.password);
+        expect(updatedUser?.key).toBe(user2.key);
+        expect(updatedUser2?.keyCreatedAt).not.toBe(updatedUser?.keyCreatedAt);
+        //console.log('keyCreatedAt: ', updatedUser.keyCreatedAt);
 
         await User.findByIdAndDelete(updatedUser?.id).exec();
       });

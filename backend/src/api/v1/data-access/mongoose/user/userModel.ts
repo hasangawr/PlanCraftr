@@ -4,6 +4,7 @@ import {
   IUserDto,
   INewUserDto,
   INewOAuthUserDto,
+  IUpdateUser,
 } from '../../interfaces/IUserDto';
 import { mapIUsertoDto } from './userMapper';
 import { AppError } from '../../../../../globals/utils/AppError';
@@ -24,6 +25,7 @@ const userSchema = new Schema<IUser, IUserModel>(
       enum: ['direct', 'google'],
       default: 'direct',
       required: true,
+      immutable: true,
     },
     password: {
       type: String,
@@ -61,7 +63,7 @@ const userSchema = new Schema<IUser, IUserModel>(
     },
     createdAt: {
       type: Date,
-      default: Date.now,
+      default: Date.now(),
     },
   },
   {
@@ -146,11 +148,13 @@ const userSchema = new Schema<IUser, IUserModel>(
         return mappedUser;
       },
 
-      async updateCurrent(user: IUserDto): Promise<IUserDto> {
+      async updateCurrent(user: IUpdateUser): Promise<IUserDto> {
         const { id, ...noId } = user;
-        const currentUser = await this.findByIdAndUpdate(id, noId).exec();
+        const updatedUser = await this.findByIdAndUpdate(id, noId, {
+          new: true,
+        }).exec();
 
-        if (!currentUser) {
+        if (!updatedUser) {
           throw new AppError(
             'User does not exist',
             400,
@@ -159,7 +163,7 @@ const userSchema = new Schema<IUser, IUserModel>(
           );
         }
 
-        return mapIUsertoDto(currentUser.toObject());
+        return mapIUsertoDto(updatedUser.toObject());
       },
 
       async deleteCurrent(id: string): Promise<IUserDto> {
@@ -179,6 +183,13 @@ const userSchema = new Schema<IUser, IUserModel>(
     },
   },
 );
+
+userSchema.pre('save', function (next) {
+  if (this.isModified('key')) {
+    this.keyCreatedAt = new Date();
+  }
+  next();
+});
 
 const User = model<IUser, IUserModel>('User', userSchema);
 

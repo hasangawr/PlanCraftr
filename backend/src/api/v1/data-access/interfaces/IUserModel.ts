@@ -1,5 +1,10 @@
 import { Model, ObjectId } from 'mongoose';
-import { IUserDto, INewUserDto, INewOAuthUserDto } from './IUserDto';
+import {
+  IUserDto,
+  INewUserDto,
+  INewOAuthUserDto,
+  IUpdateUser,
+} from './IUserDto';
 
 export interface IUser {
   _id: ObjectId;
@@ -25,6 +30,6 @@ export interface IUserModel extends Model<IUser> {
 
   createNew: (user: INewUserDto) => Promise<IUserDto>;
   createNewOAuth: (user: INewOAuthUserDto) => Promise<IUserDto>;
-  updateCurrent: (user: IUserDto) => Promise<IUserDto>;
+  updateCurrent: (user: IUpdateUser) => Promise<IUserDto>;
   deleteCurrent: (id: string) => Promise<IUserDto>;
 }

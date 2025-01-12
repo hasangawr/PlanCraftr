@@ -1,7 +1,7 @@
 import {
   INewOAuthUserDto,
   INewUserDto,
-  IUserDto,
+  IUpdateUser,
 } from '../../interfaces/IUserDto';
 import { IUserModel } from '../../interfaces/IUserModel';
 
@@ -26,7 +26,7 @@ const buildMakeUserModel = (model: IUserModel) => {
       createNewOAuth: async (newUser: INewOAuthUserDto) => {
         return await model.createNewOAuth(newUser);
       },
-      updateCurrent: async (user: IUserDto) => {
+      updateCurrent: async (user: IUpdateUser) => {
         return await model.updateCurrent(user);
       },
       deleteCurrent: async (id: string) => {

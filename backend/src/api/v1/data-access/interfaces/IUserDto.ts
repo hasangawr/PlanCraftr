@@ -27,7 +27,13 @@ export interface INewUserDto {
   keyCreatedAt?: Date;
 }
 
-//----------------new models--------------------------
+export interface IUpdateUser {
+  id: string;
+  name?: string;
+  password?: string;
+  key?: string;
+  keyCreatedAt?: Date;
+}
 
 export interface INewOAuthUserDto {
   name: string;
@@ -42,8 +48,6 @@ export interface INewOAuthUserDto {
   keyCreatedAt?: Date;
 }
 
-//----------------------------------------------------
-
 export interface IMakeUserModel {
   findByEmail: (email: string) => Promise<IUserDto | null>;
   findByUserId: (id: string) => Promise<IUserDto | null>;
@@ -52,6 +56,6 @@ export interface IMakeUserModel {
 
   createNew: (user: INewUserDto) => Promise<IUserDto>;
   createNewOAuth: (user: INewOAuthUserDto) => Promise<IUserDto>;
-  updateCurrent: (user: IUserDto) => Promise<IUserDto>;
+  updateCurrent: (user: IUpdateUser) => Promise<IUserDto>;
   deleteCurrent: (id: string) => Promise<IUserDto>;
 }
