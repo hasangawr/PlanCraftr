@@ -4,6 +4,7 @@ import {
   logoutHandler,
   registrationHandler,
   userAuthStatusVerifyHandler,
+  userEmailVerifyStatusHandler,
   userVerificationHandler,
 } from '../handlers';
 import passport from 'passport';
@@ -67,11 +68,20 @@ router.delete(
 
 router.get('/verify', userAuthStatusVerifyHandler);
 
-// router.get('/forgot-password', forgotPasswordVerify);
-// router.post('/forgot-password', forgotPassword);
+// router.get('/forgot-password', forgotPasswordVerify);  //link hits
+// router.post('/forgot-password', forgotPassword);       // initial pass the email
 // //router.get('/forgot-password-initiated', forgotPasswordInitiated);
-// router.put('/reset-password', resetPassword);
-//router.get('/user-email-verified', checkUserEmailVerified);
+// router.put('/reset-password', resetPassword);  // reset password with new pasword, email and key passed as cookies
+
+router.get(
+  '/user-email-verified',
+  celebrate({
+    [Segments.QUERY]: {
+      user: Joi.string().uuid({ version: 'uuidv4' }).required(),
+    },
+  }),
+  userEmailVerifyStatusHandler,
+);
 
 // Google auth routes
 router.get(

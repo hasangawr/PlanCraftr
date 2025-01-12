@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import request from 'supertest';
 import app from '../../src/app';
-import { createFakeUserWithoutID } from '../fakeData';
+import { createFakeUser, createFakeUserWithoutID } from '../fakeData';
 import TempUser from '../../src/api/v1/data-access/mongoose/tempUser/tempUserModel';
 import User from '../../src/api/v1/data-access/mongoose/user/userModel';
 import { hashPassword } from '../../src/globals/utils/password';
@@ -418,5 +419,66 @@ describe('authentication api integrations', () => {
     //   expect(verifyResponse.status).toBe(400);
     //   expect(verifyResponse.body.message).toBe('Invalid Data');
     // });
+  });
+
+  describe('check user email verify status', () => {
+    it('Should respond with a 400 status if the id is not specified in the url', async () => {
+      // create new user as a permenant user
+      const user = createFakeUser();
+      const { id, ...noId } = user;
+      await User.createNew(noId);
+
+      //call the endpoint
+      const response = await request(app).get(
+        `/api/v1/auth/user-email-verified`,
+      );
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Invalid Data');
+
+      //delete the user
+      await User.findOneAndDelete({ publicId: user.publicId });
+    });
+
+    it('Should respond with a 400 status if the id specified in the url is not a valid uuid', async () => {
+      //call the endpoint
+      const response = await request(app).get(
+        `/api/v1/auth/user-email-verified?user=NOT-A-UUID`,
+      );
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Invalid Data');
+    });
+
+    it('Should respond with a 200 status if the user is verified', async () => {
+      // create new user as a permenant user
+      const user = createFakeUser();
+      const { id, ...noId } = user;
+      await User.createNew(noId);
+
+      //call the endpoint
+      const response = await request(app).get(
+        `/api/v1/auth/user-email-verified?user=${user.publicId}`,
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Verified');
+
+      //delete the user
+      await User.findOneAndDelete({ publicId: user.publicId });
+    });
+
+    it('Should respond with a 400 status if the user is not verified', async () => {
+      // create new user as a permenant user
+      const user = createFakeUser();
+
+      //call the endpoint
+      const response = await request(app).get(
+        `/api/v1/auth/user-email-verified?user=${user.publicId}`,
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Unverified');
+    });
   });
 });

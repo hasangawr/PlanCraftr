@@ -1,7 +1,8 @@
-import { registerUser, verifyUser } from '../use-cases';
+import { checkUserEmailVerified, registerUser, verifyUser } from '../use-cases';
 import makeLogoutHandler from './auth/logoutHandler';
 import makeRegistrationHandler from './auth/registrationHandler';
 import makeUserAuthStatusVerifyHandler from './auth/userAuthStatusVerifyHandler';
+import makeUserEmailVerifyStatusHandler from './auth/userEmailVerifyStatusHandler';
 import makeUserVerificationHandler from './auth/userVerificationHandler';
 import makeErrorHandler from './error/errorHandler';
 
@@ -11,11 +12,15 @@ const registrationHandler = makeRegistrationHandler(registerUser);
 const userVerificationHandler = makeUserVerificationHandler(verifyUser);
 const logoutHandler = makeLogoutHandler();
 const userAuthStatusVerifyHandler = makeUserAuthStatusVerifyHandler();
+const userEmailVerifyStatusHandler = makeUserEmailVerifyStatusHandler(
+  checkUserEmailVerified,
+);
 
 export {
   registrationHandler,
   userVerificationHandler,
   logoutHandler,
   userAuthStatusVerifyHandler,
+  userEmailVerifyStatusHandler,
   errorHandler,
 };

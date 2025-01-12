@@ -3,6 +3,7 @@ import formatEmail from '../../../globals/utils/emailTemplates';
 import { hashPassword, verifyPassword } from '../../../globals/utils/password';
 import { makeTempUserModel, makeUserModel } from '../data-access';
 import makeAuthenticateUser from './auth/authenticateUser';
+import makeCheckUserEmailVerified from './auth/checkUserEmailVerified';
 import makeRegisterUser from './auth/registerUser';
 import makeVerifyUser from './auth/verifyUser';
 
@@ -18,5 +19,6 @@ const registerUser = makeRegisterUser(
 );
 const verifyUser = makeVerifyUser(tempUserModel, permUserModel);
 const authenticateUser = makeAuthenticateUser(permUserModel, verifyPassword);
+const checkUserEmailVerified = makeCheckUserEmailVerified(permUserModel);
 
-export { registerUser, verifyUser, authenticateUser };
+export { registerUser, verifyUser, authenticateUser, checkUserEmailVerified };
