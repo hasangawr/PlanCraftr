@@ -1,4 +1,11 @@
-import { checkUserEmailVerified, registerUser, verifyUser } from '../use-cases';
+import {
+  checkUserEmailVerified,
+  createNewKeyForUser,
+  registerUser,
+  sendPasswordResetLink,
+  verifyUser,
+} from '../use-cases';
+import makeForgotPasswordHandler from './auth/forgotPasswordHandler';
 import makeLogoutHandler from './auth/logoutHandler';
 import makeRegistrationHandler from './auth/registrationHandler';
 import makeUserAuthStatusVerifyHandler from './auth/userAuthStatusVerifyHandler';
@@ -15,6 +22,10 @@ const userAuthStatusVerifyHandler = makeUserAuthStatusVerifyHandler();
 const userEmailVerifyStatusHandler = makeUserEmailVerifyStatusHandler(
   checkUserEmailVerified,
 );
+const forgotPasswordHandler = makeForgotPasswordHandler(
+  createNewKeyForUser,
+  sendPasswordResetLink,
+);
 
 export {
   registrationHandler,
@@ -22,5 +33,6 @@ export {
   logoutHandler,
   userAuthStatusVerifyHandler,
   userEmailVerifyStatusHandler,
+  forgotPasswordHandler,
   errorHandler,
 };

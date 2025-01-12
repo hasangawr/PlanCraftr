@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
 import {
+  forgotPasswordHandler,
   logoutHandler,
   registrationHandler,
   userAuthStatusVerifyHandler,
@@ -68,8 +69,17 @@ router.delete(
 
 router.get('/verify', userAuthStatusVerifyHandler);
 
+router.post(
+  '/forgot-password',
+  celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      email: Joi.string().email().required(),
+    }),
+  }),
+  forgotPasswordHandler,
+); // initial pass the email
+
 // router.get('/forgot-password', forgotPasswordVerify);  //link hits
-// router.post('/forgot-password', forgotPassword);       // initial pass the email
 // //router.get('/forgot-password-initiated', forgotPasswordInitiated);
 // router.put('/reset-password', resetPassword);  // reset password with new pasword, email and key passed as cookies
 

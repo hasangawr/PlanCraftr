@@ -4,7 +4,9 @@ import { hashPassword, verifyPassword } from '../../../globals/utils/password';
 import { makeTempUserModel, makeUserModel } from '../data-access';
 import makeAuthenticateUser from './auth/authenticateUser';
 import makeCheckUserEmailVerified from './auth/checkUserEmailVerified';
+import makeCreateNewKeyForUser from './auth/createNewKeyForUser';
 import makeRegisterUser from './auth/registerUser';
+import makeSendPasswordResetLink from './auth/sendPasswordResetLink';
 import makeVerifyUser from './auth/verifyUser';
 
 const tempUserModel = makeTempUserModel();
@@ -20,5 +22,14 @@ const registerUser = makeRegisterUser(
 const verifyUser = makeVerifyUser(tempUserModel, permUserModel);
 const authenticateUser = makeAuthenticateUser(permUserModel, verifyPassword);
 const checkUserEmailVerified = makeCheckUserEmailVerified(permUserModel);
+const createNewKeyForUser = makeCreateNewKeyForUser(permUserModel);
+const sendPasswordResetLink = makeSendPasswordResetLink(formatEmail, sendEMail);
 
-export { registerUser, verifyUser, authenticateUser, checkUserEmailVerified };
+export {
+  registerUser,
+  verifyUser,
+  authenticateUser,
+  checkUserEmailVerified,
+  createNewKeyForUser,
+  sendPasswordResetLink,
+};

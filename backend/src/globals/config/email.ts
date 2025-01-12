@@ -15,13 +15,15 @@ export const sendEMail = async (
   subject: string,
   html: string,
 ) => {
-  const info = await transporter.sendMail({
-    from, //'"Maddison Foo Koch 👻" <maddison53@ethereal.email>', // sender address
-    to, //'bar@example.com, baz@example.com', // list of receivers
-    subject, //'Hello ✔', // Subject line
-    text: 'Hello world?', // plain text body
-    html, //'<b>Hello world?</b>', // html body
-  });
+  if (process.env.NODE_ENV !== 'test') {
+    const info = await transporter.sendMail({
+      from, //'"Maddison Foo Koch 👻" <maddison53@ethereal.email>', // sender address
+      to, //'bar@example.com, baz@example.com', // list of receivers
+      subject, //'Hello ✔', // Subject line
+      text: 'Hello world?', // plain text body
+      html, //'<b>Hello world?</b>', // html body
+    });
 
-  console.log('message sent: ', info.messageId);
+    console.log('message sent: ', info.messageId);
+  }
 };

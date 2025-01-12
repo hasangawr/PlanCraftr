@@ -481,4 +481,41 @@ describe('authentication api integrations', () => {
       expect(response.body.message).toBe('Unverified');
     });
   });
+
+  describe('handle forgot password reset link request', () => {
+    it('Should respond with a 400 status if email not specified in the request body', async () => {
+      const response = await request(app)
+        .post(`/api/v1/auth/forgot-password`)
+        .send({});
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Invalid Data');
+    });
+
+    it('Should respond with a 400 status if user with provided email does not exist on the db', async () => {
+      const user = createFakeUser();
+
+      const response = await request(app)
+        .post(`/api/v1/auth/forgot-password`)
+        .send({ email: user.email });
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe('user does not exist');
+    });
+
+    it('Should respond with a 200 status if the password reset link successfully sent', async () => {
+      const user = createFakeUserWithoutID();
+
+      await User.createNew(user);
+
+      const response = await request(app)
+        .post(`/api/v1/auth/forgot-password`)
+        .send({ email: user.email });
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Password reset link sent');
+
+      await User.findOneAndDelete({ email: user.email });
+    });
+  });
 });

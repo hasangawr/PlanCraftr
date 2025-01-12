@@ -27,7 +27,7 @@ class ErrorHandler {
               return;
             }
 
-            res.status(err.httpCode).json({ message: err.message });
+            res.status(err.httpCode).json({ message: err.name });
             logError(err, res);
             return;
           } else {
