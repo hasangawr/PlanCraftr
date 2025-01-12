@@ -14,6 +14,9 @@ const buildMakeUserModel = (model: IUserModel) => {
       findByUserId: async (id: string) => {
         return await model.findByUserId(id);
       },
+      findByPublicId: async (publicId: string) => {
+        return await model.findByPublicId(publicId);
+      },
       findByKey: async (key: string) => {
         return await model.findByKey(key);
       },

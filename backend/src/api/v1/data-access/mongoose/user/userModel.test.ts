@@ -51,6 +51,18 @@ describe('User model', () => {
       });
     });
 
+    describe('findByPublicId', () => {
+      it('Should return the correct user when the id is provided', async () => {
+        const user = await User.findByPublicId(user1.publicId);
+        expect(user?.email).toBe(user1.email);
+      });
+
+      it('Should return null if the user is not in the db', async () => {
+        const user = await User.findByPublicId(randomUUID());
+        expect(user).toBeNull();
+      });
+    });
+
     describe('findByKey', () => {
       it('Should return the correct user when the key is provided', async () => {
         const user = await User.findByKey(user1.key as string);
@@ -88,6 +100,7 @@ describe('User model', () => {
         const user2 = createFakeUserWithoutID();
         const currentUser = await User.updateCurrent({
           id: user1.id,
+          publicId: user1.publicId,
           ...user2,
         });
         const updatedUser = await User.findById(user1.id).exec();
@@ -98,7 +111,6 @@ describe('User model', () => {
         expect(currentUser?.password).toBe(user1.password);
 
         expect(updatedUser?.id).toBe(user1.id);
-        expect(updatedUser?.email).toBe(user2.email);
         expect(updatedUser?.name).toBe(user2.name);
         expect(updatedUser?.password).toBe(user2.password);
 

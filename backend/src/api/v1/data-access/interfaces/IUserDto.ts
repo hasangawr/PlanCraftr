@@ -2,6 +2,7 @@ export interface IUserDto {
   id: string;
   name: string;
   email: string;
+  publicId: string;
   authType?: string;
   password: string;
   googleId?: string;
@@ -46,6 +47,7 @@ export interface INewOAuthUserDto {
 export interface IMakeUserModel {
   findByEmail: (email: string) => Promise<IUserDto | null>;
   findByUserId: (id: string) => Promise<IUserDto | null>;
+  findByPublicId(publicId: string): Promise<IUserDto | null>;
   findByKey: (key: string) => Promise<IUserDto | null>;
 
   createNew: (user: INewUserDto) => Promise<IUserDto>;

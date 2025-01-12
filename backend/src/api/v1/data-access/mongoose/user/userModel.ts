@@ -7,11 +7,18 @@ import {
 } from '../../interfaces/IUserDto';
 import { mapIUsertoDto } from './userMapper';
 import { AppError } from '../../../../../globals/utils/AppError';
+import { randomUUID } from 'crypto';
 
 const userSchema = new Schema<IUser, IUserModel>(
   {
     name: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String, required: true, immutable: true },
+    publicId: {
+      type: String,
+      default: randomUUID(),
+      required: true,
+      immutable: true,
+    },
     authType: {
       type: String,
       enum: ['direct', 'google'],
@@ -72,6 +79,17 @@ const userSchema = new Schema<IUser, IUserModel>(
 
       async findByUserId(id: string): Promise<IUserDto | null> {
         const user = await this.findById(id).exec();
+
+        if (user) {
+          const userDto = mapIUsertoDto(user.toObject());
+          return userDto;
+        }
+
+        return null;
+      },
+
+      async findByPublicId(publicId: string): Promise<IUserDto | null> {
+        const user = await this.findOne({ publicId }).exec();
 
         if (user) {
           const userDto = mapIUsertoDto(user.toObject());
