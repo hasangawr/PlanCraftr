@@ -518,4 +518,62 @@ describe('authentication api integrations', () => {
       await User.findOneAndDelete({ email: user.email });
     });
   });
+
+  describe('handle verifing forgot password reset key', () => {
+    it('Should respond with a 400 status if the request does not contain key as query', async () => {
+      const user = createFakeUser();
+
+      const response = await request(app).get(`/api/v1/auth/forgot-password`);
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe('Invalid Data');
+    });
+
+    it('Should redirect user to reset password with email and key as cookies, if the key is successfully verified', async () => {
+      const user = createFakeUserWithoutID();
+
+      await User.createNew(user);
+
+      const response = await request(app).get(
+        `/api/v1/auth/forgot-password?key=${user.key}`,
+      );
+
+      const cookies = response.headers[
+        'set-cookie'
+      ] as unknown as Array<string>;
+
+      let emailCookie;
+      let keyCookie;
+
+      cookies.forEach((cookie) => {
+        if (cookie.includes('email')) {
+          emailCookie = cookie;
+        }
+        if (cookie.includes('key')) {
+          keyCookie = cookie;
+        }
+      });
+
+      expect(response.status).toBe(302);
+      expect(emailCookie).toMatch(/email=[^;]+;/);
+      expect(keyCookie).toMatch(/key=[^;]+;/);
+
+      await User.findOneAndDelete({ email: user.email });
+    });
+
+    it('Should redirect user to login with reset-user=expired query, if the key is not successfully verified', async () => {
+      const user = createFakeUserWithoutID();
+
+      const response = await request(app).get(
+        `/api/v1/auth/forgot-password?key=${user.key}`,
+      );
+
+      expect(response.status).toBe(302);
+      expect(response.header['location']).toBe(
+        `${process.env.FRONTEND_URL}/login?reset-user=expired`,
+      );
+
+      await User.findOneAndDelete({ email: user.email });
+    });
+  });
 });

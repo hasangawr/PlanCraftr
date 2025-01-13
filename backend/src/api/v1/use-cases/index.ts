@@ -7,6 +7,7 @@ import makeCheckUserEmailVerified from './auth/checkUserEmailVerified';
 import makeCreateNewKeyForUser from './auth/createNewKeyForUser';
 import makeRegisterUser from './auth/registerUser';
 import makeSendPasswordResetLink from './auth/sendPasswordResetLink';
+import makeVerifyResetPasswordKey from './auth/verifyResetPasswordKey';
 import makeVerifyUser from './auth/verifyUser';
 
 const tempUserModel = makeTempUserModel();
@@ -24,6 +25,7 @@ const authenticateUser = makeAuthenticateUser(permUserModel, verifyPassword);
 const checkUserEmailVerified = makeCheckUserEmailVerified(permUserModel);
 const createNewKeyForUser = makeCreateNewKeyForUser(permUserModel);
 const sendPasswordResetLink = makeSendPasswordResetLink(formatEmail, sendEMail);
+const verifyResetPasswordKey = makeVerifyResetPasswordKey(permUserModel);
 
 export {
   registerUser,
@@ -32,4 +34,5 @@ export {
   checkUserEmailVerified,
   createNewKeyForUser,
   sendPasswordResetLink,
+  verifyResetPasswordKey,
 };

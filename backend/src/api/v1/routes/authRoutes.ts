@@ -7,6 +7,7 @@ import {
   userAuthStatusVerifyHandler,
   userEmailVerifyStatusHandler,
   userVerificationHandler,
+  verifyResetPasswordKeyHandler,
 } from '../handlers';
 import passport from 'passport';
 
@@ -79,7 +80,16 @@ router.post(
   forgotPasswordHandler,
 ); // initial pass the email
 
-// router.get('/forgot-password', forgotPasswordVerify);  //link hits
+router.get(
+  '/forgot-password',
+  celebrate({
+    [Segments.QUERY]: Joi.object().keys({
+      key: Joi.string().uuid({ version: 'uuidv4' }).required(),
+    }),
+  }),
+  verifyResetPasswordKeyHandler,
+); //link hits
+
 // //router.get('/forgot-password-initiated', forgotPasswordInitiated);
 // router.put('/reset-password', resetPassword);  // reset password with new pasword, email and key passed as cookies
 
