@@ -87,9 +87,9 @@ describe('User model', () => {
       it('Should throw an error if a user with same email already exist in the db', async () => {
         const user2 = createFakeUserWithoutID();
         user2.email = user1.email;
-        expect(async () => {
-          await User.createNew(user2);
-        }).rejects.toThrow(new Error('User with this email already exist'));
+        await expect(User.createNew(user2)).rejects.toThrow(
+          new Error('User with this email already exist'),
+        );
 
         await User.findOneAndDelete({ email: user2.email }).exec();
       });
@@ -150,9 +150,9 @@ describe('User model', () => {
 
       it('Should throw an error if user does not exist on the db', async () => {
         const user2 = createFakeUser();
-        expect(async () => {
-          await User.updateCurrent(user2);
-        }).rejects.toThrow(new Error('User does not exist'));
+        await expect(User.updateCurrent(user2)).rejects.toThrow(
+          new Error('User does not exist'),
+        );
       });
     });
 
@@ -167,9 +167,9 @@ describe('User model', () => {
       });
       it('Should throw an error if user does not exist on the db', async () => {
         const user2 = createFakeUser();
-        expect(async () => {
-          await User.deleteCurrent(user2.id);
-        }).rejects.toThrow(new Error('User does not exist'));
+        await expect(User.deleteCurrent(user2.id)).rejects.toThrow(
+          new Error('User does not exist'),
+        );
       });
     });
   });
