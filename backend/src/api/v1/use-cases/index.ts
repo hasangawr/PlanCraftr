@@ -1,10 +1,12 @@
 import { sendEMail } from '../../../globals/config/email';
+import { minutesElapsedTillNowFrom } from '../../../globals/utils/date';
 import formatEmail from '../../../globals/utils/emailTemplates';
 import { hashPassword, verifyPassword } from '../../../globals/utils/password';
 import { makeTempUserModel, makeUserModel } from '../data-access';
 import makeAuthenticateUser from './auth/authenticateUser';
 import makeCheckUserEmailVerified from './auth/checkUserEmailVerified';
 import makeCreateNewKeyForUser from './auth/createNewKeyForUser';
+import makeForgotPasswordReset from './auth/forgotPasswordReset';
 import makeRegisterUser from './auth/registerUser';
 import makeSendPasswordResetLink from './auth/sendPasswordResetLink';
 import makeVerifyResetPasswordKey from './auth/verifyResetPasswordKey';
@@ -26,6 +28,11 @@ const checkUserEmailVerified = makeCheckUserEmailVerified(permUserModel);
 const createNewKeyForUser = makeCreateNewKeyForUser(permUserModel);
 const sendPasswordResetLink = makeSendPasswordResetLink(formatEmail, sendEMail);
 const verifyResetPasswordKey = makeVerifyResetPasswordKey(permUserModel);
+const forgotPasswordReset = makeForgotPasswordReset(
+  permUserModel,
+  hashPassword,
+  minutesElapsedTillNowFrom,
+);
 
 export {
   registerUser,
@@ -35,4 +42,5 @@ export {
   createNewKeyForUser,
   sendPasswordResetLink,
   verifyResetPasswordKey,
+  forgotPasswordReset,
 };

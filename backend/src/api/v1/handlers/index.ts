@@ -1,12 +1,14 @@
 import {
   checkUserEmailVerified,
   createNewKeyForUser,
+  forgotPasswordReset,
   registerUser,
   sendPasswordResetLink,
   verifyResetPasswordKey,
   verifyUser,
 } from '../use-cases';
 import makeForgotPasswordHandler from './auth/forgotPasswordHandler';
+import makeForgotPasswordResetHandler from './auth/forgotPasswordResetHandler';
 import makeLogoutHandler from './auth/logoutHandler';
 import makeRegistrationHandler from './auth/registrationHandler';
 import makeUserAuthStatusVerifyHandler from './auth/userAuthStatusVerifyHandler';
@@ -31,6 +33,8 @@ const forgotPasswordHandler = makeForgotPasswordHandler(
 const verifyResetPasswordKeyHandler = makeVerifyResetPasswordKeyHandler(
   verifyResetPasswordKey,
 );
+const forgotPasswordResetHandler =
+  makeForgotPasswordResetHandler(forgotPasswordReset);
 
 export {
   registrationHandler,
@@ -40,5 +44,6 @@ export {
   userEmailVerifyStatusHandler,
   forgotPasswordHandler,
   verifyResetPasswordKeyHandler,
+  forgotPasswordResetHandler,
   errorHandler,
 };

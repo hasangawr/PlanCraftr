@@ -4,7 +4,8 @@ import app from '../../src/app';
 import { createFakeUser, createFakeUserWithoutID } from '../fakeData';
 import TempUser from '../../src/api/v1/data-access/mongoose/tempUser/tempUserModel';
 import User from '../../src/api/v1/data-access/mongoose/user/userModel';
-import { hashPassword } from '../../src/globals/utils/password';
+import { hashPassword, verifyPassword } from '../../src/globals/utils/password';
+import { randomUUID } from 'crypto';
 
 describe('authentication api integrations', () => {
   describe('base url', () => {
@@ -538,6 +539,8 @@ describe('authentication api integrations', () => {
         `/api/v1/auth/forgot-password?key=${user.key}`,
       );
 
+      //console.log('headers: ', response.headers);
+
       const cookies = response.headers[
         'set-cookie'
       ] as unknown as Array<string>;
@@ -573,6 +576,153 @@ describe('authentication api integrations', () => {
         `${process.env.FRONTEND_URL}/login?reset-user=expired`,
       );
 
+      await User.findOneAndDelete({ email: user.email });
+    });
+  });
+
+  describe('handle forgot password reset', () => {
+    it('Should update user password & respond with "200" status & "success" message if valid email, key and new password are provided', async () => {
+      //-------initiate forgot password reset & get cookies--------------
+      const user = createFakeUserWithoutID();
+
+      await User.createNew(user);
+
+      const response = await request(app).get(
+        `/api/v1/auth/forgot-password?key=${user.key}`,
+      );
+
+      const cookies = response.headers[
+        'set-cookie'
+      ] as unknown as Array<string>;
+
+      let emailCookie;
+      let keyCookie;
+
+      cookies.forEach((cookie) => {
+        if (cookie.includes('email')) {
+          emailCookie = cookie;
+        }
+        if (cookie.includes('key')) {
+          keyCookie = cookie;
+        }
+      });
+      //-----------------------------------------------------------------
+
+      const newPassword = 'newPassword#123';
+
+      const resetPasswordResponse = await request(app)
+        .put(`/api/v1/auth/reset-password`)
+        .set('Cookie', [`${emailCookie};${keyCookie}`])
+        .send({ password: newPassword });
+
+      expect(resetPasswordResponse.status).toBe(200);
+      expect(resetPasswordResponse.body.message).toBe('success');
+
+      //check whether the password updated on db
+      const updatedUser = await User.findByEmail(user.email);
+      const verified = await verifyPassword(
+        updatedUser?.password as string,
+        newPassword,
+      );
+      expect(verified).toBe(true);
+
+      //delete created user
+      await User.findOneAndDelete({ email: user.email });
+    });
+
+    // TODO: How to??
+    it.skip('key expiry', () => {});
+
+    it('Should respond with a 400 status if the request does not contain new password in body or key & email as cookies', async () => {
+      const user = createFakeUser();
+
+      const newPassword = 'newPassword#123';
+
+      const resetPasswordResponse = await request(app)
+        .put(`/api/v1/auth/reset-password`)
+        .set('Cookie', [`${'invalidEmailCookie'};${'invalidKeyCookie'}`])
+        .send({ password: newPassword });
+
+      expect(resetPasswordResponse.status).toBe(400);
+      expect(resetPasswordResponse.body.message).toBe('Invalid Data');
+    });
+
+    it('Should respond with a 400 error if user does not exist', async () => {
+      //-------initiate forgot password reset & get cookies--------------
+      const user = createFakeUserWithoutID();
+
+      await User.createNew(user);
+
+      const response = await request(app).get(
+        `/api/v1/auth/forgot-password?key=${user.key}`,
+      );
+
+      const cookies = response.headers[
+        'set-cookie'
+      ] as unknown as Array<string>;
+
+      let emailCookie;
+      let keyCookie;
+
+      cookies.forEach((cookie) => {
+        if (cookie.includes('email')) {
+          emailCookie = cookie;
+        }
+        if (cookie.includes('key')) {
+          keyCookie = cookie;
+        }
+      });
+      //-----------------------------------------------------------------
+
+      //delete created user
+      await User.findOneAndDelete({ email: user.email });
+
+      const newPassword = 'newPassword#123';
+
+      const resetPasswordResponse = await request(app)
+        .put(`/api/v1/auth/reset-password`)
+        .set('Cookie', [`${emailCookie};${keyCookie}`])
+        .send({ password: newPassword });
+
+      expect(resetPasswordResponse.status).toBe(400);
+      expect(resetPasswordResponse.body.message).toBe('user does not exist');
+    });
+
+    it('Should respond with a 400 error if keys does not match', async () => {
+      //-------initiate forgot password reset & get cookies--------------
+      const user = createFakeUserWithoutID();
+
+      await User.createNew(user);
+
+      const response = await request(app).get(
+        `/api/v1/auth/forgot-password?key=${user.key}`,
+      );
+
+      const cookies = response.headers[
+        'set-cookie'
+      ] as unknown as Array<string>;
+
+      let emailCookie;
+
+      cookies.forEach((cookie) => {
+        if (cookie.includes('email')) {
+          emailCookie = cookie;
+        }
+      });
+      //-----------------------------------------------------------------
+
+      const newPassword = 'newPassword#123';
+      const differentKeyCookie = `key=${randomUUID()}; Path=/`;
+
+      const resetPasswordResponse = await request(app)
+        .put(`/api/v1/auth/reset-password`)
+        .set('Cookie', [`${emailCookie};${differentKeyCookie}`])
+        .send({ password: newPassword });
+
+      expect(resetPasswordResponse.status).toBe(400);
+      expect(resetPasswordResponse.body.message).toBe('keys does not match');
+
+      //delete created user
       await User.findOneAndDelete({ email: user.email });
     });
   });

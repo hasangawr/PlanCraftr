@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { celebrate, Joi, Segments } from 'celebrate';
 import {
   forgotPasswordHandler,
+  forgotPasswordResetHandler,
   logoutHandler,
   registrationHandler,
   userAuthStatusVerifyHandler,
@@ -91,7 +92,26 @@ router.get(
 ); //link hits
 
 // //router.get('/forgot-password-initiated', forgotPasswordInitiated);
-// router.put('/reset-password', resetPassword);  // reset password with new pasword, email and key passed as cookies
+
+router.put(
+  '/reset-password',
+  celebrate({
+    [Segments.BODY]: Joi.object().keys({
+      password: Joi.string()
+        .min(6)
+        .max(30)
+        .pattern(new RegExp(/\d/))
+        .required(),
+    }),
+    [Segments.COOKIES]: Joi.object()
+      .keys({
+        email: Joi.string().email().required(),
+        key: Joi.string().uuid({ version: 'uuidv4' }).required(),
+      })
+      .unknown(),
+  }),
+  forgotPasswordResetHandler,
+);
 
 router.get(
   '/user-email-verified',
