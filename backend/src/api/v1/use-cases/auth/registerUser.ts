@@ -9,6 +9,7 @@ const makeRegisterUser = (
   permUserModel: IMakeUserModel,
   hashPassword: (password: string) => Promise<string>,
   formatEmail: (link: string, type: EmailType) => string | undefined,
+  verifyConnection: () => Promise<boolean>,
   sendEmail: (from: string, to: string, subject: string, html: string) => void,
 ) => {
   const registerUser = async (
@@ -35,7 +36,9 @@ const makeRegisterUser = (
       password: hashedPassword,
     });
 
-    if (process.env.NODE_ENV !== 'test') {
+    const smtpServerConnected = await verifyConnection();
+
+    if (smtpServerConnected) {
       const formattedEmail = formatEmail(
         `${process.env.BASE_API_URL}/v1/auth/verify-email?key=${createdUser.key}`,
         EmailType.VerifyEmail,

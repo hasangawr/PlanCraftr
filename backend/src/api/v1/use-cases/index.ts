@@ -1,4 +1,4 @@
-import { sendEMail } from '../../../globals/config/email';
+import { sendEMail, verifyConnection } from '../../../globals/config/email';
 import { minutesElapsedTillNowFrom } from '../../../globals/utils/date';
 import formatEmail from '../../../globals/utils/emailTemplates';
 import { hashPassword, verifyPassword } from '../../../globals/utils/password';
@@ -20,13 +20,18 @@ const registerUser = makeRegisterUser(
   permUserModel,
   hashPassword,
   formatEmail,
+  verifyConnection,
   sendEMail,
 );
 const verifyUser = makeVerifyUser(tempUserModel, permUserModel);
 const authenticateUser = makeAuthenticateUser(permUserModel, verifyPassword);
 const checkUserEmailVerified = makeCheckUserEmailVerified(permUserModel);
 const createNewKeyForUser = makeCreateNewKeyForUser(permUserModel);
-const sendPasswordResetLink = makeSendPasswordResetLink(formatEmail, sendEMail);
+const sendPasswordResetLink = makeSendPasswordResetLink(
+  formatEmail,
+  verifyConnection,
+  sendEMail,
+);
 const verifyResetPasswordKey = makeVerifyResetPasswordKey(permUserModel);
 const forgotPasswordReset = makeForgotPasswordReset(
   permUserModel,

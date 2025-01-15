@@ -1,8 +1,8 @@
-import { AppError } from '../../../../globals/utils/AppError';
 import { EmailType } from '../../../../globals/utils/emailTemplates';
 
 const makeSendPasswordResetLink = (
   formatEmail: (link: string, type: EmailType) => string | undefined,
+  verifyConnection: () => Promise<boolean>,
   sendEMail: (
     from: string,
     to: string,
@@ -14,20 +14,14 @@ const makeSendPasswordResetLink = (
     const link = `${process.env.BASE_API_URL}/v1/auth/forgot-password?key=${key}`;
     const formattedEmail = formatEmail(link, EmailType.ResetPassword);
 
-    try {
+    const smtpServerConnected = await verifyConnection();
+
+    if (smtpServerConnected) {
       await sendEMail(
         process.env.EMAIL as string,
         email,
         'Reset Password',
         formattedEmail as string,
-      );
-    } catch (error) {
-      console.error('Error sending password reset email: ', error);
-      throw new AppError(
-        'Error sending password reset email',
-        500,
-        'Password reset message sending failed',
-        false,
       );
     }
   };

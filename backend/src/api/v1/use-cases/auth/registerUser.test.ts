@@ -1,3 +1,6 @@
+import { configDotenv } from 'dotenv';
+configDotenv();
+
 import {
   createFakeUser,
   createFakeUserWithoutID,
@@ -6,6 +9,7 @@ import {
 import { makeTempUserModel, makeUserModel } from '../../data-access';
 import { ITempUserDto } from '../../data-access/interfaces/ITempUserDto';
 import makeRegisterUser from './registerUser';
+import { EmailType } from '../../../../globals/utils/emailTemplates';
 
 describe('registerUser', () => {
   // temporary user: email not verified yet
@@ -21,6 +25,7 @@ describe('registerUser', () => {
 
   let hashPasswordMock: jest.Mock;
   let formatEmailMock: jest.Mock;
+  let verifyConnectionMock: jest.Mock;
   let sendEmailMock: jest.Mock;
   let spyCreateNewTempUser: jest.SpyInstance;
   let spyFindPermUserByEmail: jest.SpyInstance;
@@ -33,6 +38,7 @@ describe('registerUser', () => {
 
     hashPasswordMock = jest.fn();
     formatEmailMock = jest.fn();
+    verifyConnectionMock = jest.fn();
     sendEmailMock = jest.fn();
     spyCreateNewTempUser = jest.spyOn(tempUserModel, 'createNew');
     spyFindPermUserByEmail = jest.spyOn(permUserModel, 'findByEmail');
@@ -42,6 +48,7 @@ describe('registerUser', () => {
       permUserModel,
       hashPasswordMock,
       formatEmailMock,
+      verifyConnectionMock,
       sendEmailMock,
     );
 
@@ -86,30 +93,32 @@ describe('registerUser', () => {
 
   it('Should send the verification email once the user is registered', async () => {
     spyCreateNewTempUser.mockResolvedValueOnce(tempUser);
+    verifyConnectionMock.mockResolvedValueOnce(true);
+    formatEmailMock.mockResolvedValueOnce('formattedEmail');
 
     const createdUser = await registerUser(
       tempUser.name,
       tempUser.email,
       tempUser.password,
     );
-    // const link = `${process.env.BASE_API_URL}/v1/auth/verify-email?key=${tempUser.key}`;
+    const link = `${process.env.BASE_API_URL}/v1/auth/verify-email?key=${tempUser.key}`;
 
-    // const senderEmail = 'noreply@plancraftr.com';
-    // const recieverEmail = tempUser.email;
-    // const subject = 'Verify Email';
+    const senderEmail = process.env.EMAIL;
+    const recieverEmail = tempUser.email;
+    const subject = 'Verify Email';
 
     expect(spyCreateNewTempUser).toHaveBeenCalledTimes(1);
     expect(createdUser.email).toBe(tempUser.email);
-    // expect(formatEmailMock).toHaveBeenLastCalledWith(
-    //   link,
-    //   EmailType.VerifyEmail,
-    // );
-    // expect(sendEmailMock).toHaveBeenLastCalledWith(
-    //   senderEmail,
-    //   recieverEmail,
-    //   subject,
-    //   'formattedEmail',
-    // );
+    expect(formatEmailMock).toHaveBeenLastCalledWith(
+      link,
+      EmailType.VerifyEmail,
+    );
+    expect(sendEmailMock).toHaveBeenLastCalledWith(
+      senderEmail,
+      recieverEmail,
+      subject,
+      'formattedEmail',
+    );
   });
 
   it('Should return the name & email of a registered user', async () => {
