@@ -12,7 +12,7 @@ const passportConfig = (_passport: passport.PassportStatic) => {
       {
         clientID: process.env.GOOGLE_CLIENT_ID as string,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-        callbackURL: 'api/v1/auth/google/callback',
+        callbackURL: '/api/v1/auth/google/callback',
       },
       async (accessToken, refreshToken, profile, done) => {
         const _email = profile.emails?.at(0)?.value;
