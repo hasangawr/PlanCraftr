@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import User from './userModel';
 import {
   createFakeUser,
@@ -125,26 +126,40 @@ describe('User model', () => {
       });
 
       it('Should update the keyCreatedTime if the key is updated', async () => {
+        //----------
+        const { key, ...user0 } = createFakeUser();
+        const userWithoutKey = new User(user0);
+        await userWithoutKey.save();
+        const findUser0 = await User.findByEmail(user0.email);
+
+        //----------
+        const wait = (ms: number) =>
+          new Promise((resolve) => setTimeout(resolve, ms));
         const user2 = createFakeUserWithoutID();
         const user3 = createFakeUserWithoutID();
-        const updatedUser = await User.updateCurrent({
-          id: user1.id,
-          key: user2.key,
-        });
-        const updatedUser2 = await User.updateCurrent({
-          id: user1.id,
-          key: user3.key,
-        });
 
-        expect(updatedUser?.id).toBe(user1.id);
-        expect(updatedUser?.name).toBe(user1.name);
-        expect(updatedUser?.password).toBe(user1.password);
-        expect(updatedUser?.key).toBe(user2.key);
-        expect(updatedUser2?.keyCreatedAt).not.toBe(updatedUser?.keyCreatedAt);
-        //console.log('keyCreatedAt: ', updatedUser.keyCreatedAt);
+        if (findUser0) {
+          const updatedUser = await User.updateCurrent({
+            id: findUser0.id,
+            key: user2.key,
+          });
+          await wait(5000);
+          const updatedUser2 = await User.updateCurrent({
+            id: findUser0.id,
+            key: user3.key,
+          });
 
-        await User.findByIdAndDelete(updatedUser?.id).exec();
-      });
+          expect(updatedUser?.id).toBe(findUser0.id);
+          expect(updatedUser?.name).toBe(findUser0.name);
+          expect(updatedUser?.password).toBe(findUser0.password);
+          expect(updatedUser?.key).toBe(user2.key);
+          expect(updatedUser2?.keyCreatedAt).not.toBe(
+            updatedUser?.keyCreatedAt,
+          );
+
+          await User.findByIdAndDelete(updatedUser?.id).exec();
+        }
+      }, 8000);
 
       it.skip('Should only update an user with authType = direct', async () => {});
 

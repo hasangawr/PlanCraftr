@@ -60,6 +60,7 @@ const userSchema = new Schema<IUser, IUserModel>(
     },
     keyCreatedAt: {
       type: Date,
+      default: '',
     },
     createdAt: {
       type: Date,
@@ -150,6 +151,9 @@ const userSchema = new Schema<IUser, IUserModel>(
 
       async updateCurrent(user: IUpdateUser): Promise<IUserDto> {
         const { id, ...noId } = user;
+        if (noId.key) {
+          noId['keyCreatedAt'] = new Date();
+        }
         const updatedUser = await this.findByIdAndUpdate(id, noId, {
           new: true,
         }).exec();
@@ -184,12 +188,13 @@ const userSchema = new Schema<IUser, IUserModel>(
   },
 );
 
-userSchema.pre('save', function (next) {
-  if (this.isModified('key')) {
-    this.keyCreatedAt = new Date();
-  }
-  next();
-});
+// userSchema.pre('findOneAndUpdate', async function (next) {
+//   const updates = this.getUpdate()
+//   if (updates) {
+//     this.setUpdate({ ...this.getUpdate(), keyCreatedAt: Date.now() });
+//   }
+//   next();
+// });
 
 const User = model<IUser, IUserModel>('User', userSchema);
 
