@@ -8,6 +8,9 @@ import { hashPassword, verifyPassword } from '../../src/globals/utils/password';
 import { randomUUID } from 'crypto';
 
 describe('authentication api integrations', () => {
+  afterAll((done) => {
+    done();
+  });
   describe('base url', () => {
     it('Should return a welcome text', async () => {
       const response = await request(app).get('/');
