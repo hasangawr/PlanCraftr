@@ -1,3 +1,6 @@
+import { configDotenv } from 'dotenv';
+configDotenv();
+
 import express, { NextFunction, Request, Response } from 'express';
 import authRoutes from './api/v1/routes/authRoutes';
 import connectDB from './globals/config/db';
