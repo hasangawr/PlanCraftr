@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 
 const makeUserVerificationHandler = (
-  verifyUser: (key: string) => Promise<{ name: string; email: string }>,
+  verifyUser: (
+    key: string,
+  ) => Promise<{ name: string; email: string; publicId: string }>,
 ) => {
   const userVerificationHandler = async (
     req: Request,
@@ -13,7 +15,7 @@ const makeUserVerificationHandler = (
     try {
       const verifiedUser = await verifyUser(key as string);
       res.redirect(
-        `${process.env.FRONTEND_URL}/login?user=${verifiedUser.email}`,
+        `${process.env.FRONTEND_URL}/login?user=${verifiedUser.publicId}`,
       );
     } catch (error) {
       next(error);

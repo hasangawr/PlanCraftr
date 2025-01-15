@@ -37,13 +37,17 @@ describe('User verification handler', () => {
   });
 
   it('Should redirect user to login if key is valid', async () => {
-    verifyUser.mockResolvedValueOnce({ name: user.name, email: user.email });
+    verifyUser.mockResolvedValueOnce({
+      name: user.name,
+      email: user.email,
+      publicId: 'publicID',
+    });
 
     await userVerificationHandler(request, response.res, response.next);
 
     expect(response.res.redirect).toHaveBeenCalledTimes(1);
     expect(response.res.redirect).toHaveBeenCalledWith(
-      `${process.env.FRONTEND_URL}/login?user=${user.email}`,
+      `${process.env.FRONTEND_URL}/login?user=publicID`,
     );
   });
 

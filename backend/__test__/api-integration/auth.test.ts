@@ -149,7 +149,7 @@ describe('authentication api integrations', () => {
       );
     });
 
-    it('Should create a new permenant user, delete temporary user & redirect user to login page with user=email in the url, if the key is valid', async () => {
+    it('Should create a new permenant user, delete temporary user & redirect user to login page with user=publicId in the url, if the key is valid', async () => {
       //create user on temp collection
       const tempUser = createFakeUserWithoutID();
       const createdTempUser = await TempUser.createNew({
@@ -174,7 +174,7 @@ describe('authentication api integrations', () => {
       //test whether it redirects
       expect(response.status).toBe(302);
       expect(response.headers.location).toBe(
-        `${process.env.FRONTEND_URL}/login?user=${tempUser.email}`,
+        `${process.env.FRONTEND_URL}/login?user=${verifiedPermUser?.publicId}`,
       );
 
       await User.findOneAndDelete({ email: tempUser.email }).exec();
@@ -583,12 +583,12 @@ describe('authentication api integrations', () => {
   describe('handle forgot password reset', () => {
     it('Should update user password & respond with "200" status & "success" message if valid email, key and new password are provided', async () => {
       //-------initiate forgot password reset & get cookies--------------
-      const user = createFakeUserWithoutID();
-
-      await User.createNew(user);
+      const { key, ...user } = createFakeUserWithoutID();
+      const createdUser = await User.createNew(user);
+      await User.updateCurrent({ id: createdUser.id, key });
 
       const response = await request(app).get(
-        `/api/v1/auth/forgot-password?key=${user.key}`,
+        `/api/v1/auth/forgot-password?key=${key}`,
       );
 
       const cookies = response.headers[

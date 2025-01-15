@@ -6,7 +6,9 @@ const makeVerifyUser = (
   tempUserModel: IMakeTempUserModel,
   permUserModel: IMakeUserModel,
 ) => {
-  const verifyUser = async (key: string) => {
+  const verifyUser = async (
+    key: string,
+  ): Promise<{ name: string; email: string; publicId: string }> => {
     const tempUser = await tempUserModel.findByKey(key);
 
     if (tempUser) {
@@ -18,7 +20,11 @@ const makeVerifyUser = (
 
       await tempUserModel.deleteCurrent(tempUser.id);
 
-      return { name: permUser.name, email: permUser.email };
+      return {
+        name: permUser.name,
+        email: permUser.email,
+        publicId: permUser.publicId,
+      };
     }
     throw new AppError(
       'key expired',
