@@ -19,30 +19,29 @@ const Home2 = () => {
   const features = [
     {
       title: 'Planner',
-      message:
-        'Take control of your day with a smart planner. Schedule tasks, prioritize work, and achieve your goals',
+      message: 'Take control of your day with a smart planner 📅',
     },
     {
       title: 'Habit Tracker',
-      message: 'Build positive habits and break the bad ones',
+      message: 'Build positive habits and break the bad ones 💪',
     },
     {
       title: 'Calendar',
-      message: 'Stay organized and never miss an important date',
+      message: 'Stay organized and never miss an important date 🗓️',
     },
     {
       title: 'Notebook',
-      message: 'Capture your thoughts, ideas, and to-do lists in one place',
+      message: 'Capture your thoughts, ideas, and to-do lists in one place 📝',
     },
     {
       title: 'Notifier',
       message:
-        'Stay informed and productive with timely notifications for tasks, deadlines, and events',
+        'Stay informed and productive with timely notifications for tasks, deadlines and events 🔔',
     },
     {
       title: 'And More!',
       message:
-        'Explore a range of productivity tools crafted to help you work smarter, manage your time better, and achieve balance',
+        'Explore a range of productivity tools crafted to help you work smarter 🚀',
     },
   ];
 
@@ -75,7 +74,7 @@ const Home2 = () => {
                   autoStart: true,
                   loop: true,
                   cursor: '_',
-                  deleteSpeed: 5,
+                  deleteSpeed: 10,
                 }}
                 onInit={(typewriter) => {
                   for (const feature of features) {

@@ -19,7 +19,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomeLayout />}>
-          <Route index element={<Home />} />
+          <Route index element={<Home2 />} />
           <Route path="login" element={<LoginForm />} />
           <Route path="register" element={<RegisterForm />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
@@ -36,8 +36,8 @@ function App() {
         <Route path="/dashboard" element={<ProtectedRoutes />}>
           <Route index element={<Dashboard />} />
         </Route>
-        {/* new home */}
-        <Route path="new-home" element={<Home2 />} />
+        {/* prev home */}
+        <Route path="prev-home" element={<Home />} />
       </Routes>
     </Router>
   );
