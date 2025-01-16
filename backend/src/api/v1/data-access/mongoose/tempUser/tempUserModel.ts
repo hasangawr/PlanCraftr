@@ -19,7 +19,7 @@ const tempUserSchema = new Schema<ITempUser, ITempUserModel>(
     },
     key: {
       type: String,
-      default: randomUUID(),
+      default: () => randomUUID(),
       required: true,
     },
     createdAt: {

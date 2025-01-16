@@ -16,7 +16,7 @@ const userSchema = new Schema<IUser, IUserModel>(
     email: { type: String, required: true, immutable: true },
     publicId: {
       type: String,
-      default: randomUUID(),
+      default: () => randomUUID(),
       required: true,
       immutable: true,
     },

@@ -17,7 +17,7 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   mailConfig = {
     host: process.env.TEST_SMTP_HOST,
-    port: 587,
+    port: process.env.TEST_SMTP_PORT as unknown as number,
     auth: {
       user: process.env.TEST_SMTP_USER,
       pass: process.env.TEST_SMTP_PASS,
