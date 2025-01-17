@@ -2,10 +2,10 @@ name: "Staging env provision & configure"
 on:
   push:
     branches:
-      - dev
+      - staging
   pull_request:
     branches:
-      - dev
+      - staging
 permissions:
   id-token: write # This is required for aws oidc connection
   contents: read # This is required for actions/checkout
@@ -14,59 +14,8 @@ env:
   TF_LOG: INFO
   AWS_REGION: ${{ secrets.AWS_REGION }}
 jobs:
-  test_backend:
+  provision_and_configure_staging:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v3
-
-      - name: Install dependencies
-        working-directory: ./backend
-        run: |
-          npm install
-
-      - name: Run unit tests
-        id: test
-        working-directory: ./backend
-        run: |
-          npm run test
-
-      - name: Backend tests failed
-        if: steps.test.outcome  == 'failure'
-        run: exit 1
-
-  test_frontend:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v3
-
-      - name: Install dependencies
-        working-directory: ./frontend
-        run: |
-          npm install
-
-      - name: Run unit tests
-        id: test
-        working-directory: ./frontend
-        run: |
-          npm run test
-
-      - name: Frontend tests failed
-        if: steps.test.outcome  == 'failure'
-        run: exit 1
-
-  provision_and_configure:
-    runs-on: ubuntu-latest
-    needs: [test_backend, test_frontend]
     defaults:
       run:
         shell: bash
@@ -152,7 +101,7 @@ jobs:
 
       - name: Terraform Apply
         id: apply
-        if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
 
       - name: Get ec2 public ip
@@ -197,7 +146,7 @@ jobs:
             # Clone the repository
             mkdir -p ~/app && cd ~/app
             git clone https://github.com/hasangawr/PlanCraftr.git .
-            git checkout dev
+            git checkout staging
             git pull
             cd backend
 
@@ -238,10 +187,10 @@ jobs:
 
           EOF
 
-  deploy_to_s3:
+  deploy_to_s3_staging:
     runs-on: ubuntu-latest
-    needs: provision_and_configure
-    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+    needs: provision_and_configure_staging
+    if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
     defaults:
       run:
         shell: bash
@@ -268,43 +217,36 @@ jobs:
         run: |
           aws s3 sync ./frontend/dist s3://www.staging.plancraftr.com --delete
 
-  # # # destroy_after_delay:
-  # #   runs-on: ubuntu-latest
-  # #   needs: provision_and_configure
-  # #   if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
-  # #   defaults:
-  # #     run:
-  # #       shell: bash
-  # #       working-directory: ./infrastructure/terraform/staging/
-  # #   steps:
-  # #     - name: Git checkout
-  # #       uses: actions/checkout@v3
+  destroy_dev:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
+    needs: deploy_to_s3_staging
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./infrastructure/terraform/dev/
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
 
-  # #     - name: Define sleep time in minutes
-  # #       id: define_sleep
-  # #       run: echo "sleep_minutes=$(( ${{ vars.DESTROY_AWS_STAGING_ENV_RESOURCES_AFTER_SECONDS }} / 60 ))" >> $GITHUB_ENV
+      - name: Configure AWS credentials from AWS account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-session-name: GitHub-OIDC-TERRAFORM
 
-  # #     - name: Wait for ${{ env.sleep_minutes }} minutes
-  # #       run: sleep ${{ vars.DESTROY_AWS_STAGING_ENV_RESOURCES_AFTER_SECONDS }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.2.5
 
-  # #     - name: Configure AWS credentials from AWS account
-  # #       uses: aws-actions/configure-aws-credentials@v1
-  # #       with:
-  # #         role-to-assume: ${{ secrets.AWS_ROLE }}
-  # #         aws-region: ${{ secrets.AWS_REGION }}
-  # #         role-session-name: GitHub-OIDC-TERRAFORM
+      - name: Terraform Init
+        id: init
+        env:
+          AWS_BUCKET_NAME: ${{ secrets.AWS_DEV_TF_STATE_S3_BUCKET_NAME }}
+          AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_TF_STATE_S3_BUCKET_KEY_NAME }}
+        run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
 
-  # #     - name: Setup Terraform
-  # #       uses: hashicorp/setup-terraform@v2
-  # #       with:
-  # #         terraform_version: 1.2.5
-
-  # #     - name: Terraform Init
-  # #       id: init
-  # #       env:
-  # #         AWS_BUCKET_NAME: ${{ secrets.AWS_TF_STATE_S3_BUCKET_NAME }}
-  # #         AWS_BUCKET_KEY_NAME: ${{ secrets.AWS_TF_STATE_S3_BUCKET_KEY_NAME }}
-  # #       run: terraform init -backend-config="bucket=${AWS_BUCKET_NAME}" -backend-config="key=${AWS_BUCKET_KEY_NAME}" -backend-config="region=${AWS_REGION}"
-
-  # #     - name: Terraform Destroy
-  # #       run: terraform destroy -auto-approve -input=false
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve -input=false
