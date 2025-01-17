@@ -8,6 +8,7 @@ const logger = pino({
         target: 'pino/file',
         options: {
           destination: `${process.env.LOGS_PATH}/app.log`,
+          mkdir: true,
           append: true,
         },
       },
@@ -15,6 +16,7 @@ const logger = pino({
         target: 'pino/file',
         options: {
           destination: `${process.env.LOGS_PATH}/error.log`,
+          mkdir: true,
           append: true,
         },
         level: 'error',
