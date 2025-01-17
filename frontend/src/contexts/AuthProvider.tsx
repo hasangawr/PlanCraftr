@@ -32,8 +32,10 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       } else {
         setIsLoggedIn(false);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
-      console.error('Error checking user auth status: ', error);
+      //TODO: error handling
+      //console.error('Error checking user auth status: ', error);
       setIsLoggedIn(false);
     }
   };

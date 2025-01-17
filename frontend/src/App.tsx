@@ -11,6 +11,7 @@ import VerifyEmail from './pages/VerifyEmail';
 import ResetPasswordMessage from './pages/ResetPasswordMessage';
 import ResetPassword from './components/ResetPassword';
 import Home from './pages/Home';
+import Home2 from './pages/Home2';
 //import ProtectResetPasswordRoutes from './components/ProtectResetPasswordRoutes';
 
 function App() {
@@ -18,7 +19,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomeLayout />}>
-          <Route index element={<Home />} />
+          <Route index element={<Home2 />} />
           <Route path="login" element={<LoginForm />} />
           <Route path="register" element={<RegisterForm />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
@@ -35,6 +36,8 @@ function App() {
         <Route path="/dashboard" element={<ProtectedRoutes />}>
           <Route index element={<Dashboard />} />
         </Route>
+        {/* prev home */}
+        <Route path="prev-home" element={<Home />} />
       </Routes>
     </Router>
   );
