@@ -1,7 +1,5 @@
 import { AppError } from '../../../../globals/utils/AppError';
 import { IMakeUserModel } from '../../data-access/interfaces/IUserDto';
-import { configDotenv } from 'dotenv';
-configDotenv();
 
 const makeForgotPasswordReset = (
   permUserModel: IMakeUserModel,
