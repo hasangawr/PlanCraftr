@@ -121,7 +121,7 @@ resource "aws_cloudfront_distribution" "www_dev_distribution" {
     }
 
     viewer_certificate {
-      acm_certificate_arn = "arn:aws:acm:us-east-1:084828604403:certificate/243b8f73-9d67-4956-9f89-df37c6ad54f9"
+      acm_certificate_arn = "arn:aws:acm:us-east-1:084828604403:certificate/f5772987-cecc-431c-b5fd-1e2bd7e0c727"
       ssl_support_method = "sni-only"
     }
 
@@ -165,7 +165,7 @@ resource "aws_cloudfront_distribution" "dev_distribution" {
     }
 
     viewer_certificate {
-      acm_certificate_arn = "arn:aws:acm:us-east-1:084828604403:certificate/243b8f73-9d67-4956-9f89-df37c6ad54f9"
+      acm_certificate_arn = "arn:aws:acm:us-east-1:084828604403:certificate/f5772987-cecc-431c-b5fd-1e2bd7e0c727"
       ssl_support_method = "sni-only"
     }
 
