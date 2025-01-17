@@ -1,8 +1,8 @@
-name: "Auto destroy staging env"
+name: "Auto destroy dev env"
 on:
   push:
     branches:
-      - main
+      - staging
 permissions:
   id-token: write # This is required for aws oidc connection
   contents: read # This is required for actions/checkout
@@ -16,7 +16,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./infrastructure/terraform/staging/
+        working-directory: ./infrastructure/terraform/dev/
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
