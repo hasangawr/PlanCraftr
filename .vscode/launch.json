@@ -9,7 +9,8 @@
       "program": "${workspaceFolder}/backend/src/index.ts",
       "preLaunchTask": "tsc: build - backend/tsconfig.json",
       "outFiles": ["${workspaceFolder}/backend/dist/**/*.js"],
-      "envFile": "${workspaceFolder}/backend/.env"
+      "envFile": "${workspaceFolder}/backend/.env",
+      "env": { "LOGS_PATH": "backend/logs" }
     },
     {
       "type": "chrome",
