@@ -1,6 +1,3 @@
-import { configDotenv } from 'dotenv';
-configDotenv();
-
 import {
   createFakeUser,
   createFakeUserWithoutID,
