@@ -9,7 +9,7 @@
     "watch": "nodemon dist/src/index.js --watch",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:unit": "jest --testPathIgnorePatterns=(/__test__/api-integration/ /dist/)",
+    "test:unit": "jest --testPathIgnorePatterns=\"/__test__/api-integration/|/dist/\"",
     "test:api": "jest --testPathPattern=/__test__/api-integration/ --forceExit"
   },
   "keywords": [],
