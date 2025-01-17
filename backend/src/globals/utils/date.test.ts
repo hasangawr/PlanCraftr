@@ -1,4 +1,4 @@
-import { minutesElapsedTillNowFrom } from '../../src/globals/utils/date';
+import { minutesElapsedTillNowFrom } from './date';
 
 //test
 describe('Dates', () => {
